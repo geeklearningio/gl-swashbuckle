@@ -21,6 +21,13 @@ namespace GeekLearning.SwashbuckleExtensions
             return new ControllerContext<TController>(examples);
         }
 
+        public ControllerContext<TController> ForController<TController>(Action<ControllerContext<TController>> builder)
+        {
+            var context =  new ControllerContext<TController>(examples);
+            builder(context);
+            return context;
+        }
+
         public class ControllerContext<TController>
         {
             private Dictionary<string, Dictionary<string, Dictionary<string, object>>> examples;
