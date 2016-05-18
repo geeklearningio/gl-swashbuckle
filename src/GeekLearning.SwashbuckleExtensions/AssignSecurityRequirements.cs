@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNet.Authorization;
-using Swashbuckle.SwaggerGen;
+﻿using Swashbuckle.SwaggerGen;
+using Swashbuckle.SwaggerGen.Generator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GeekLearning.SwashbuckleExtensions
 {

@@ -5,13 +5,6 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GeekLearning.SwashbuckleExtensions", "src\GeekLearning.SwashbuckleExtensions\GeekLearning.SwashbuckleExtensions.xproj", "{1BD5505A-E4B4-4047-8421-B097B9CC1424}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4CAC5070-595C-4E88-995A-2F1B372AE601}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GeekLearning.SwashbuckleExtensions.BasicSample", "src\GeekLearning.SwashbuckleExtensions.BasicSample\GeekLearning.SwashbuckleExtensions.BasicSample.xproj", "{3CD221F3-1F10-4DBC-925E-A6C2FF0F3CB6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,10 +15,6 @@ Global
 		{1BD5505A-E4B4-4047-8421-B097B9CC1424}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BD5505A-E4B4-4047-8421-B097B9CC1424}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BD5505A-E4B4-4047-8421-B097B9CC1424}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3CD221F3-1F10-4DBC-925E-A6C2FF0F3CB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3CD221F3-1F10-4DBC-925E-A6C2FF0F3CB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3CD221F3-1F10-4DBC-925E-A6C2FF0F3CB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3CD221F3-1F10-4DBC-925E-A6C2FF0F3CB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

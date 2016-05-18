@@ -1,5 +1,6 @@
 ﻿using Swashbuckle;
 using Swashbuckle.SwaggerGen;
+using Swashbuckle.SwaggerGen.Generator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
