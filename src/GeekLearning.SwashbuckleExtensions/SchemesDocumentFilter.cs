@@ -10,14 +10,9 @@ namespace GeekLearning.SwashbuckleExtensions
 {
     public class SchemesDocumentFilter : IDocumentFilter
     {
-        public SchemesDocumentFilter()
+        public SchemesDocumentFilter(IEnumerable<string> schemes)
         {
-            this.Schemes = new List<string>();
-        }
-
-        public SchemesDocumentFilter(params string[] schemes)
-        {
-            this.Schemes = schemes;
+            this.Schemes = schemes.ToArray();
         }
 
         public IList<string> Schemes { get; set; }

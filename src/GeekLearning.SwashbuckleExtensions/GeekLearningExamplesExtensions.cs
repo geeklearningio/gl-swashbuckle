@@ -15,5 +15,12 @@ namespace GeekLearning.SwashbuckleExtensions
             examplesBuilder(examples);
             documentOptions.OperationFilter<AssignExamples>(examples);
         }
+
+        public static void UseSchemes(this SwaggerGenOptions documentOptions, Action<ISet<string>> schemesBuilder)
+        {
+            var schemes = new HashSet<string>();
+            schemesBuilder(schemes);
+            documentOptions.DocumentFilter<SchemesDocumentFilter>(schemes);
+        }
     }
 }
