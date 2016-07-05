@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
-using Swashbuckle.SwaggerGen.Generator;
-
-namespace GeekLearning.SwashbuckleExtensions
+﻿namespace GeekLearning.SwashbuckleExtensions
 {
+    using Swashbuckle.Swagger.Model;
+    using Swashbuckle.SwaggerGen.Generator;
+    using System.Collections.Generic;
+
     public class AssignExamples : IOperationFilter
     {
         private ExamplesBuilder builder;
@@ -40,6 +37,7 @@ namespace GeekLearning.SwashbuckleExtensions
                             statusResponse.Schema = successResponse.Schema;
                         }
                     }
+
                     statusResponse.Examples = statusSamples.Value;
                 }
             }
