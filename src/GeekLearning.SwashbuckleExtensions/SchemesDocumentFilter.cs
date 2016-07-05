@@ -1,13 +1,10 @@
-﻿using Swashbuckle;
-using Swashbuckle.SwaggerGen;
-using Swashbuckle.SwaggerGen.Generator;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace GeekLearning.SwashbuckleExtensions
+﻿namespace GeekLearning.SwashbuckleExtensions
 {
+    using Swashbuckle.Swagger.Model;
+    using Swashbuckle.SwaggerGen.Generator;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class SchemesDocumentFilter : IDocumentFilter
     {
         public SchemesDocumentFilter(IEnumerable<string> schemes)

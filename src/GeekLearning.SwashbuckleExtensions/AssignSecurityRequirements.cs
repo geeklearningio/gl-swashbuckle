@@ -1,17 +1,16 @@
-﻿using Swashbuckle.SwaggerGen;
-using Swashbuckle.SwaggerGen.Generator;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Authorization;
-
-namespace GeekLearning.SwashbuckleExtensions
+﻿namespace GeekLearning.SwashbuckleExtensions
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Swashbuckle.Swagger.Model;
+    using Swashbuckle.SwaggerGen.Generator;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class AssignSecurityRequirements : IOperationFilter
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-
             var controllerAuthorize = context.ApiDescription.GetControllerAttributes()
                 .OfType<AuthorizeAttribute>();
 
@@ -37,17 +36,18 @@ namespace GeekLearning.SwashbuckleExtensions
                 foreach (var security in securityMethods)
                 {
                     if (operation.Security == null)
+                    {
                         operation.Security = new List<IDictionary<string, IEnumerable<string>>>();
+                    }
 
                     var oAuthRequirements = new Dictionary<string, IEnumerable<string>>
                     {
-                        { security.Key , scopes  }
+                        { security.Key, scopes }
                     };
 
                     operation.Security.Add(oAuthRequirements);
                 }
             }
-
         }
     }
 }

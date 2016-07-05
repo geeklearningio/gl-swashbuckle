@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
-using Swashbuckle.SwaggerGen.Generator;
-
-namespace GeekLearning.SwashbuckleExtensions
+﻿namespace GeekLearning.SwashbuckleExtensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
+
     public class ExamplesBuilder
     {
         public ExamplesBuilder()
         {
-            this.Examples = new Dictionary<string, Dictionary<string, Dictionary<string, object>>>(); 
+            this.Examples = new Dictionary<string, Dictionary<string, Dictionary<string, object>>>();
         }
 
         public ControllerContext<TController> ForController<TController>()
@@ -21,7 +19,7 @@ namespace GeekLearning.SwashbuckleExtensions
 
         public ControllerContext<TController> ForController<TController>(Action<ControllerContext<TController>> builder)
         {
-            var context =  new ControllerContext<TController>(this.Examples);
+            var context = new ControllerContext<TController>(this.Examples);
             builder(context);
             return context;
         }
@@ -44,7 +42,6 @@ namespace GeekLearning.SwashbuckleExtensions
                 return context;
             }
 
-
             public ActionContext<TReturn> ForAction<TReturn>(Expression<Func<TController, TReturn>> action)
             {
                 var methodCall = ((MethodCallExpression)action.Body);
@@ -61,7 +58,6 @@ namespace GeekLearning.SwashbuckleExtensions
 
                 return new ActionContext<TReturn>(actionResponses);
             }
-
 
             public ActionContext<TReturn> ForAction<TReturn>(Expression<Func<TController, Task<TReturn>>> action, Action<ActionContext<TReturn>> builder)
             {
@@ -111,6 +107,5 @@ namespace GeekLearning.SwashbuckleExtensions
                 }
             }
         }
-
     }
 }
