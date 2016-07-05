@@ -1,12 +1,9 @@
-﻿using Swashbuckle.SwaggerGen;
-using Swashbuckle.SwaggerGen.Application;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace GeekLearning.SwashbuckleExtensions
+﻿namespace GeekLearning.SwashbuckleExtensions
 {
+    using Swashbuckle.SwaggerGen.Application;
+    using System;
+    using System.Collections.Generic;
+
     public static class GeekLearningExamplesExtensions
     {
         public static void UseExamples(this SwaggerGenOptions documentOptions, Action<ExamplesBuilder> examplesBuilder)
