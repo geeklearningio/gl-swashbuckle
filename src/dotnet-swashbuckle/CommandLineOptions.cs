@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace dotnet_swashbuckle
+namespace GeekLearning.DotNet.Swashbuckle
 {
     public class CommandLineOptions
     {
