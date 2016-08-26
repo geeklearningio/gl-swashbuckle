@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GeekLearning.SwashbuckleExtensions", "src\GeekLearning.SwashbuckleExtensions\GeekLearning.SwashbuckleExtensions.xproj", "{1BD5505A-E4B4-4047-8421-B097B9CC1424}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "dotnet-swashbuckle", "src\dotnet-swashbuckle\dotnet-swashbuckle.xproj", "{58822602-5E9F-4441-A0A4-77F4562F5890}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{1BD5505A-E4B4-4047-8421-B097B9CC1424}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BD5505A-E4B4-4047-8421-B097B9CC1424}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BD5505A-E4B4-4047-8421-B097B9CC1424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58822602-5E9F-4441-A0A4-77F4562F5890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58822602-5E9F-4441-A0A4-77F4562F5890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58822602-5E9F-4441-A0A4-77F4562F5890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58822602-5E9F-4441-A0A4-77F4562F5890}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
