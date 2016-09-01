@@ -16,11 +16,12 @@ namespace GeekLearning.DotNet.Swashbuckle
         public string TargetProject { get; set; }
         public NuGetFramework Framework { get; set; }
         public string BuildBasePath { get; set; }
-        public string BuildOutputPath { get; set; }
+        public string OutputPath { get; set; }
         public bool NoBuild { get; set; }
         public IList<string> RemainingArguments { get; set; }
         public bool IsVerbose { get; set; }
         public bool IsHelp { get; set; }
+        public string ApiVersion { get; set; }
 
         public static CommandLineOptions Parse(string[] args)
         {
@@ -63,6 +64,10 @@ namespace GeekLearning.DotNet.Swashbuckle
                 "-o|--output <output_file>",
                 "File in which to write swagger schema",
                 CommandOptionType.SingleValue);
+            var apiVersion = app.Option(
+              "-v|--api-version <api_version>",
+              "The api version you want to generate swagger definition for.",
+              CommandOptionType.SingleValue);
             var noBuild = app.Option("--no-build", "Do not build before executing.", CommandOptionType.NoValue);
             var verbose = app.Option("--verbose", "Show verbose output", CommandOptionType.NoValue);
             app.VersionOption("--version", () => _assemblyVersion);
@@ -75,9 +80,10 @@ namespace GeekLearning.DotNet.Swashbuckle
                 options.Framework = framework.HasValue()
                     ? NuGetFramework.Parse(framework.Value())
                     : null;
-                options.BuildOutputPath = output.Value();
+                options.OutputPath = output.Value();
                 options.NoBuild = noBuild.HasValue();
                 options.IsVerbose = verbose.HasValue();
+                options.ApiVersion = apiVersion.Value();
                 options.RemainingArguments = app.RemainingArguments;
                 return 0;
             });
