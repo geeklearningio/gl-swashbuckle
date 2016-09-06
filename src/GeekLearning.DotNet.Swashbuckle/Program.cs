@@ -64,6 +64,7 @@ namespace GeekLearning.DotNet.Swashbuckle
             }
 
 
+
             var tempProjectPathUri = new Uri(tempProjectPath);
 
             var projectDependency = tempProjectPathUri.MakeRelativeUri(new Uri(project.ProjectDirectory)).ToString();
@@ -72,7 +73,7 @@ namespace GeekLearning.DotNet.Swashbuckle
             {
                 AssemblyPath = assemblyPath,
                 ContentRoot = project.ProjectDirectory,
-                OutputPath = options.OutputPath,
+                OutputPath = Path.IsPathRooted(options.OutputPath) ? options.OutputPath : Path.Combine(project.ProjectDirectory, options.OutputPath),
                 ApiVersion = options.ApiVersion,
                 ProjectDependency = new DirectoryInfo(project.ProjectDirectory).Name,
                 IsNetCoreApp = PlatformServices.Default.Application.RuntimeFramework.FullName == ".NETCoreApp,Version=v1.0"
@@ -88,6 +89,20 @@ namespace GeekLearning.DotNet.Swashbuckle
                     File.WriteAllText(Path.Combine(tempProjectPath, Path.GetFileNameWithoutExtension(filePath.Replace("GeekLearning.DotNet.Swashbuckle.ProjectTemplate.", ""))), template(generationContext));
                 }
             }
+
+            var restore = Command.CreateDotNet("restore", new string[] { });
+
+            restore.WorkingDirectory(tempProjectPath);
+            var result = restore.Execute();
+            if (result.ExitCode == 0)
+            {
+                var run = Command.CreateDotNet("run", new string[] { }, configuration: configuration);
+                run.WorkingDirectory(tempProjectPath);
+                result = run.Execute();
+
+            }
+
+            Directory.Delete(tempProjectPath, true);
         }
 
 
