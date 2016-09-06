@@ -6,8 +6,8 @@
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>1bd5505a-e4b4-4047-8421-b097b9cc1424</ProjectGuid>
-    <RootNamespace>GeekLearning.SwashbuckleExtensions</RootNamespace>
+    <ProjectGuid>58822602-5e9f-4441-a0a4-77f4562f5890</ProjectGuid>
+    <RootNamespace>GeekLearning.DotNet.Swashbuckle</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -16,9 +16,4 @@
     <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.targets" Condition="'$(VSToolsPath)' != ''" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties project_1json__JSONSchema="" />
-    </VisualStudio>
-  </ProjectExtensions>
 </Project>
