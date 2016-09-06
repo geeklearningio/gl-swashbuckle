@@ -1,0 +1,39 @@
+﻿{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Swashbuckle": "6.0.0-beta902",
+    "NETStandard.Library": "1.6.0",
+    "System.Runtime.Loader": "4.0.0",
+    "Microsoft.AspNetCore.Hosting": "1.0.0",
+    "Microsoft.AspNetCore.TestHost": "1.0.0",
+    "{{ProjectDependency}}": "*"
+  },
+
+  "frameworks": {
+    {{#if IsNetCoreApp}}
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
+      ],
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      }
+    }
+    {{/if}}
+    {{#unless IsNetCoreApp}}
+    "net462": {
+      "frameworkAssemblies": {
+        "System.Reflection": "4.0.10.0"
+      }
+    }
+    {{/unless}}
+  }
+}

@@ -1,0 +1,52 @@
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Swashbuckle.Swagger.Application;
+using Swashbuckle.Swagger.Model;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Loader;
+using System.Threading.Tasks;
+
+namespace GeekLearning.DotNet.Swashbuckle.ProjectTemplate
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+
+            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(@"{{AssemblyPath}}");
+            var startup = assembly.GetTypes().Where(x => x.Name == "Startup").SingleOrDefault();
+
+            Console.WriteLine("Startup : " + startup.FullName);
+
+            var testServer = new TestServer(new WebHostBuilder()
+                .UseContentRoot(@"{{ContentRoot}}")
+                .UseStartup(startup));
+
+            var swaggerProvider = testServer.Host.Services.GetRequiredService<ISwaggerProvider>();
+            var mvcJsonOptions = testServer.Host.Services.GetRequiredService<IOptions<MvcJsonOptions>>();
+
+            var swaggerSerializer = new JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new SwaggerContractResolver(mvcJsonOptions.Value.SerializerSettings)
+            };
+
+            var document = swaggerProvider.GetSwagger(@"{{ApiVersion}}");
+
+            using (var fs = new FileStream(@"{{OutputPath}}", FileMode.Create, FileAccess.ReadWrite))
+            {
+                using (var writer = new StreamWriter(fs))
+                {
+                    swaggerSerializer.Serialize(writer, document);
+                }
+            }
+        }
+    }
+}

@@ -17,6 +17,7 @@ namespace GeekLearning.DotNet.Swashbuckle
         public NuGetFramework Framework { get; set; }
         public string BuildBasePath { get; set; }
         public string OutputPath { get; set; }
+        public string BuildOutputPath { get; set; }
         public bool NoBuild { get; set; }
         public IList<string> RemainingArguments { get; set; }
         public bool IsVerbose { get; set; }
@@ -60,8 +61,12 @@ namespace GeekLearning.DotNet.Swashbuckle
                 "-f|--framework <framework>",
                 $"Target framework to load from the startup project (defaults to the framework most compatible with {FrameworkConstants.CommonFrameworks.NetCoreApp10}).",
                 CommandOptionType.SingleValue);
+            var buildOutput = app.Option(
+               "-o|--output <output_file>",
+               "File in which to write swagger schema",
+                CommandOptionType.SingleValue);
             var output = app.Option(
-                "-o|--output <output_file>",
+                "-so|--swagger-output <swagger_output_file>",
                 "File in which to write swagger schema",
                 CommandOptionType.SingleValue);
             var apiVersion = app.Option(
@@ -80,6 +85,7 @@ namespace GeekLearning.DotNet.Swashbuckle
                 options.Framework = framework.HasValue()
                     ? NuGetFramework.Parse(framework.Value())
                     : null;
+                options.BuildOutputPath = output.Value();
                 options.OutputPath = output.Value();
                 options.NoBuild = noBuild.HasValue();
                 options.IsVerbose = verbose.HasValue();

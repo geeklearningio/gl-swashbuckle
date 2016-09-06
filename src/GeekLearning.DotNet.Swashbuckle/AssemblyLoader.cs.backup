@@ -1,0 +1,85 @@
+﻿using Microsoft.Extensions.DependencyModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
+using System.Threading.Tasks;
+using Microsoft.DotNet.ProjectModel;
+using Microsoft.DotNet.ProjectModel.Graph;
+
+namespace GeekLearning.DotNet.Swashbuckle
+{
+    public class AssemblyLoader : AssemblyLoadContext
+    {
+        private string folderPath;
+        private Dictionary<string, string> knownAssemblies;
+
+
+        public AssemblyLoader(string folderPath, Dictionary<string, string> knownAssemblies)
+        {
+            this.folderPath = folderPath;
+            this.knownAssemblies = knownAssemblies;
+        }
+
+        public AssemblyLoader(string folderPath, ProjectContext project)
+        {
+            this.folderPath = folderPath;
+            this.knownAssemblies = new Dictionary<string, string>();
+
+            var target = project.LockFile.Targets.First(x => x.RuntimeIdentifier == project.RuntimeIdentifier);
+            foreach (var lib in target.Libraries)
+            {
+                foreach (var runtimeAssembly in lib.RuntimeAssemblies)
+                {
+                    var fullPath = Path.Combine(project.PackagesDirectory, lib.Name, lib.Version.ToFullString(), runtimeAssembly.Path);
+                    if (fullPath.EndsWith(".dll") && File.Exists(fullPath))
+                    {
+                        knownAssemblies[Path.GetFileNameWithoutExtension(fullPath)] = fullPath;
+                        knownAssemblies[lib.Name] = fullPath;
+                    }
+                }
+            }
+
+            foreach (var item in knownAssemblies)
+            {
+                Console.WriteLine(item.Value);
+                this.LoadFromAssemblyPath(item.Value);
+            }
+        }
+
+        protected override Assembly Load(AssemblyName assemblyName)
+        {
+            var deps = DependencyContext.Default;
+            var res = deps.CompileLibraries.Where(d => d.Name.Contains(assemblyName.Name)).ToList();
+            if (res.Count > 0)
+            {
+                return Assembly.Load(new AssemblyName(res.First().Name));
+            }
+            else
+            {
+                var apiApplicationFileInfo = new FileInfo($"{folderPath}{Path.DirectorySeparatorChar}{assemblyName.Name}.dll");
+                if (File.Exists(apiApplicationFileInfo.FullName))
+                {
+                    var asl = new AssemblyLoader(apiApplicationFileInfo.DirectoryName, this.knownAssemblies);
+                    return asl.LoadFromAssemblyPath(apiApplicationFileInfo.FullName);
+                }
+                else
+                {
+                    string path;
+                    if (this.knownAssemblies.TryGetValue(assemblyName.Name, out path))
+                    {
+                        return this.LoadFromAssemblyPath(path);
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("NOT FOUND : " + assemblyName);
+                    }
+                }
+            }
+            return Assembly.Load(assemblyName);
+        }
+    }
+}
