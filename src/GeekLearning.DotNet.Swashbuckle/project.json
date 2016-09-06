@@ -20,10 +20,6 @@
   },
 
   "scripts": {
-    "postcompile": [
-      "rimraf %USERPROFILE%\\.nuget\\packages\\%project:name%",
-      "dotnet pack --no-build --configuration %compile:Configuration% -o c:\\tempnuget"
-    ]
   },
 
   "frameworks": {
