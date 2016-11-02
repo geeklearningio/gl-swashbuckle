@@ -76,7 +76,7 @@ namespace GeekLearning.DotNet.Swashbuckle
                 OutputPath = Path.IsPathRooted(options.OutputPath) ? options.OutputPath : Path.Combine(project.ProjectDirectory, options.OutputPath),
                 ApiVersion = options.ApiVersion,
                 ProjectDependency = new DirectoryInfo(project.ProjectDirectory).Name,
-                IsNetCoreApp = PlatformServices.Default.Application.RuntimeFramework.FullName == ".NETCoreApp,Version=v1.0"
+                IsNetCoreApp = project.TargetFramework.DotNetFrameworkName == ".NETCoreApp,Version=v1.0"
             };
 
             var ass = Assembly.GetEntryAssembly();
