@@ -16,7 +16,8 @@
     "NETStandard.Library": "1.6.0",
     "Microsoft.AspNetCore.Hosting": "1.0.0",
     "Microsoft.AspNetCore.TestHost": "1.0.0",
-    "Handlebars.NetStandard": "1.0.1"
+    "Handlebars.NetStandard": "1.0.1",
+    "Microsoft.NETCore.Platforms": "1.0.1"
   },
 
   "scripts": {
