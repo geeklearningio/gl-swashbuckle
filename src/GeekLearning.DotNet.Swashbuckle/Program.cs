@@ -47,7 +47,7 @@ namespace GeekLearning.DotNet.Swashbuckle
                             ?? project.ProjectFile.GetCompilerOptions(null, configuration).EmitEntryPoint.GetValueOrDefault();
 
 
-            Console.WriteLine(project.TargetFramework);
+            Console.WriteLine(project.TargetFramework.DotNetFrameworkName);
             Console.WriteLine(PlatformServices.Default.Application.RuntimeFramework.FullName);
 
             var assemblyPath = isExecutable && (project.IsPortable || options.Framework.IsDesktop())
