@@ -22,39 +22,42 @@ namespace GeekLearning.SwashbuckleExtensions
 
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            if (context.ApiDescription.ParameterDescriptions.Any(x => x.ModelMetadata.ContainerType == typeof(IFormFile)))
+            if (operation.Parameters != null)
             {
-                var formFileParameters = operation
-                    .Parameters
-                    .OfType<NonBodyParameter>()
-                    .Where(x => FormFilePropertyNames.Contains(x.Name))
-                    .ToArray();
-                var index = operation.Parameters.IndexOf(formFileParameters.First());
-                foreach (var formFileParameter in formFileParameters)
+                if (context.ApiDescription.ParameterDescriptions.Any(x => x.ModelMetadata.ContainerType == typeof(IFormFile)))
                 {
-                    operation.Parameters.Remove(formFileParameter);
-                }
+                    var formFileParameters = operation
+                        .Parameters
+                        .OfType<NonBodyParameter>()
+                        .Where(x => FormFilePropertyNames.Contains(x.Name))
+                        .ToArray();
+                    var index = operation.Parameters.IndexOf(formFileParameters.First());
+                    foreach (var formFileParameter in formFileParameters)
+                    {
+                        operation.Parameters.Remove(formFileParameter);
+                    }
 
-                var formFileParameterName = context
-                    .ApiDescription
-                    .ActionDescriptor
-                    .Parameters
-                    .Where(x => x.ParameterType == typeof(IFormFile))
-                    .Select(x => x.Name)
-                    .First();
-                var parameter = new NonBodyParameter()
-                {
-                    Name = formFileParameterName,
-                    In = "formData",
-                    Description = "The file to upload.",
-                    Required = true,
-                    Type = "file"
-                };
-                operation.Parameters.Insert(index, parameter);
+                    var formFileParameterName = context
+                        .ApiDescription
+                        .ActionDescriptor
+                        .Parameters
+                        .Where(x => x.ParameterType == typeof(IFormFile))
+                        .Select(x => x.Name)
+                        .First();
+                    var parameter = new NonBodyParameter()
+                    {
+                        Name = formFileParameterName,
+                        In = "formData",
+                        Description = "The file to upload.",
+                        Required = true,
+                        Type = "file"
+                    };
+                    operation.Parameters.Insert(index, parameter);
 
-                if (!operation.Consumes.Contains(FormDataMimeType))
-                {
-                    operation.Consumes.Add(FormDataMimeType);
+                    if (!operation.Consumes.Contains(FormDataMimeType))
+                    {
+                        operation.Consumes.Add(FormDataMimeType);
+                    }
                 }
             }
         }
