@@ -1,8 +1,8 @@
 ﻿namespace GeekLearning.SwashbuckleExtensions
 {
     using Microsoft.AspNetCore.Authorization;
-    using Swashbuckle.Swagger.Model;
-    using Swashbuckle.SwaggerGen.Generator;
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -11,10 +11,10 @@
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            var controllerAuthorize = context.ApiDescription.GetControllerAttributes()
+            var controllerAuthorize = context.ApiDescription.ControllerAttributes()
                 .OfType<AuthorizeAttribute>();
 
-            var actionAttributes = context.ApiDescription.GetActionAttributes();
+            var actionAttributes = context.ApiDescription.ActionAttributes();
 
             var actionAuthorize = actionAttributes.OfType<AuthorizeAttribute>();
 

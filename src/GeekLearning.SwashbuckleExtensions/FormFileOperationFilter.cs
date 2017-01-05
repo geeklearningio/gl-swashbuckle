@@ -6,8 +6,8 @@
 namespace GeekLearning.SwashbuckleExtensions
 {
     using Microsoft.AspNetCore.Http;
-    using Swashbuckle.Swagger.Model;
-    using Swashbuckle.SwaggerGen.Generator;
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
     using System;
     using System.Collections.Generic;
     using System.Linq;

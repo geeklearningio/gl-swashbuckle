@@ -9,13 +9,13 @@
   },
 
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
-    "Microsoft.AspNetCore.Authorization": "1.0.0",
-    "Swashbuckle": "6.0.0-beta902"
+    "NETStandard.Library": "1.6.1",
+    "Microsoft.AspNetCore.Authorization": "1.1.0",
+    "Swashbuckle.AspNetCore": "1.0.0-rc1"
   },
 
   "frameworks": {
-    "net452": { },
+    "net452": {},
     "netstandard1.6": {}
   }
 }
