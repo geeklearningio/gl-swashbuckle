@@ -1,6 +1,6 @@
 {
   "version": "0.0.1-*",
-  "description": "Swashbuckle extensions to add examples abd security requirements in the generated Swagger file.",
+  "description": "Swashbuckle extensions to add examples and security requirements in the generated Swagger file.",
   "authors": [ "Geek Learning", "Cyprien Autexier", "Adrien Siffermann" ],
   "packOptions": {
     "tags": [],
