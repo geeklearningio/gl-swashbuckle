@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.0</TargetFrameworks>
     <AssemblyName>dotnet-swashbuckle</AssemblyName>
 
     <PackageId>GeekLearning.DotNet.Swashbuckle</PackageId>
@@ -25,6 +25,13 @@
   <ItemGroup>
     <EmbeddedResource Include="ProjectTemplate\Program.cst.hbs" />
     <EmbeddedResource Include="ProjectTemplate\SwaggerGen.csproj.hbs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="prefercliruntime">
+      <Pack>true</Pack>
+      <PackagePath>\prefercliruntime</PackagePath>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
