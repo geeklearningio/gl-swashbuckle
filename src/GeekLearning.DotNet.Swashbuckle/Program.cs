@@ -13,10 +13,10 @@ namespace GeekLearning.DotNet.Swashbuckle
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-    using global::Swashbuckle.Swagger.Model;
     using Microsoft.Extensions.Options;
     using Microsoft.AspNetCore.Mvc;
-    using global::Swashbuckle.Swagger.Application;
+    using global::Swashbuckle.AspNetCore.Swagger;
+    using global::Swashbuckle.AspNetCore.SwaggerGen;
     using Newtonsoft.Json;
     using Microsoft.Extensions.PlatformAbstractions;
     using Microsoft.AspNetCore.TestHost;
@@ -114,7 +114,7 @@ namespace GeekLearning.DotNet.Swashbuckle
             return SelectCompatibleFramework(
                  framework,
                  ProjectContext.CreateContextForEachFramework(filePath,
-                     runtimeIdentifiers: RuntimeEnvironmentRidExtensions.GetAllCandidateRuntimeIdentifiers()));
+                     runtimeIdentifiers: Microsoft.DotNet.Cli.Utils.RuntimeEnvironmentRidExtensions.GetAllCandidateRuntimeIdentifiers()));
         }
 
         private static ProjectContext SelectCompatibleFramework(NuGetFramework target, IEnumerable<ProjectContext> contexts)

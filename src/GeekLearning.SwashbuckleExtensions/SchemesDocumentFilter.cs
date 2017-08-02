@@ -1,7 +1,7 @@
 ﻿namespace GeekLearning.SwashbuckleExtensions
 {
-    using Swashbuckle.Swagger.Model;
-    using Swashbuckle.SwaggerGen.Generator;
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
     using System.Collections.Generic;
     using System.Linq;
 

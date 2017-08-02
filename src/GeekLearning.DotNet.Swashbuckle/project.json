@@ -8,7 +8,7 @@
     }
   },
   "dependencies": {
-    "Swashbuckle": "6.0.0-beta902",
+    "Swashbuckle.AspNetCore": "1.0.0-rc1",
     "Microsoft.DotNet.Cli.Utils": "1.0.0-*",
     "Microsoft.DotNet.ProjectModel": "1.0.0-*",
     "Microsoft.Extensions.CommandLineUtils": "1.0.0",
