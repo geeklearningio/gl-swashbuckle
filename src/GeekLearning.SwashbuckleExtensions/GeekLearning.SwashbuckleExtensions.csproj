@@ -1,31 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Swashbuckle extensions to add examples abd security requirements in the generated Swagger file.</Description>
-    <VersionPrefix>0.0.1</VersionPrefix>
-    <Authors>Geek Learning;Cyprien Autexier;Adrien Siffermann</Authors>
     <TargetFrameworks>net452;netstandard1.6</TargetFrameworks>
     <AssemblyName>GeekLearning.SwashbuckleExtensions</AssemblyName>
+
     <PackageId>GeekLearning.SwashbuckleExtensions</PackageId>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <Authors>Geek Learning;Cyprien Autexier;Adrien Siffermann</Authors>
+    <Description>Swashbuckle extensions to add examples abd security requirements in the generated Swagger file.</Description>
     <PackageProjectUrl>https://github.com/geeklearningio/gl-swashbuckle</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/geeklearningio/gl-swashbuckle/blob/master/LICENSE.md</PackageLicenseUrl>
-    <NetStandardImplicitPackageVersion>1.6.0</NetStandardImplicitPackageVersion>
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="1.0.2" />
-    <PackageReference Include="Swashbuckle" Version="6.0.0-beta902" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
