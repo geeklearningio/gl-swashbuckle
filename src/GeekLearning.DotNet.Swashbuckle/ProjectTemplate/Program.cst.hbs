@@ -1,0 +1,71 @@
+﻿namespace GeekLearning.DotNet.Swashbuckle.ProjectTemplate
+{
+    using global::Swashbuckle.AspNetCore.Swagger;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.TestHost;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Options;
+    using Newtonsoft.Json;
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+
+    public class Program
+    {
+        [Flags]
+        enum ExitCodes : int
+        {
+            Success = 0,
+            StartupClassNotFound = 1,
+            SwashbuckleNotFound = 2,
+        }
+
+        public static int Main(string[] args)
+        {
+            var assemblyName = @"{{AssemblyName}}";
+            var contentRoot = @"{{ContentRoot}}";
+            var apiVersion = @"{{ApiVersion}}";
+            var outputPath = @"{{OutputPath}}";
+
+            var assembly = Assembly.Load(new AssemblyName(assemblyName));
+            var startup = assembly.GetTypes().Where(x => x.Name == "Startup").SingleOrDefault();
+            if (startup == null)
+            {
+                Console.WriteLine($"Error: Cannot find Startup class in assembly {assemblyName}.");
+                return (int)ExitCodes.StartupClassNotFound;
+            }
+
+            var testServer = new TestServer(new WebHostBuilder()
+                .UseContentRoot(contentRoot)
+                .UseStartup(startup));
+
+            var mvcJsonOptions = testServer.Host.Services.GetRequiredService<IOptions<MvcJsonOptions>>();
+            var swaggerProvider = testServer.Host.Services.GetService<ISwaggerProvider>();
+            if (swaggerProvider == null)
+            {
+                Console.WriteLine("Error: Swashbuckle.AspNetCore does not seem to be referenced and configured in the targeted project. Unable to get ISwaggerProvider service.");
+                return (int)ExitCodes.SwashbuckleNotFound;
+            }
+
+            var swaggerSerializer = new JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new SwaggerContractResolver(mvcJsonOptions.Value.SerializerSettings)
+            };
+
+            var document = swaggerProvider.GetSwagger(apiVersion);
+
+            using (var fs = new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite))
+            {
+                using (var writer = new StreamWriter(fs))
+                {
+                    swaggerSerializer.Serialize(writer, document);
+                }
+            }
+
+            return (int)ExitCodes.Success;
+        }
+    }
+}
