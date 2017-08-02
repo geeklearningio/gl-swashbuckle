@@ -1,92 +1,87 @@
-﻿
-
-
-namespace GeekLearning.DotNet.Swashbuckle
+﻿namespace GeekLearning.DotNet.Swashbuckle
 {
+    using HandlebarsDotNet;
     using Microsoft.DotNet.Cli.Utils;
-    using Microsoft.DotNet.InternalAbstractions;
-    using Microsoft.DotNet.ProjectModel;
-    using Microsoft.Extensions.DependencyInjection;
-    using NuGet.Frameworks;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.Extensions.Options;
-    using Microsoft.AspNetCore.Mvc;
-    using global::Swashbuckle.AspNetCore.Swagger;
-    using global::Swashbuckle.AspNetCore.SwaggerGen;
-    using Newtonsoft.Json;
-    using Microsoft.Extensions.PlatformAbstractions;
-    using Microsoft.AspNetCore.TestHost;
-    using Microsoft.AspNetCore.Hosting;
     using System.Reflection;
-    using Microsoft.Extensions.DependencyModel;
-    using System.Runtime.Loader;
-    using HandlebarsDotNet;
 
     public class Program
     {
-        private static string folderPath;
+        private const string netCoreAppFramework = "netcoreapp";
+        private const string targetFrameworkProperty = "TargetFramework";
+        private const string targetFrameworksProperty = "TargetFrameworks";
+        private const string intermediateOutputPathProperty = "IntermediateOutputPath";
+        private const string assemblyNameProperty = "AssemblyName";
 
         public static void Main(string[] args)
         {
-            Console.WriteLine(string.Join(" ", args));
-
             var options = CommandLineOptions.Parse(args);
+            if (options.IsHelp)
+            {
+                return;
+            }
 
-            var project = Create(options.TargetProject ?? Directory.GetCurrentDirectory(), options.Framework);
+            var projectFile = FindMsBuildProject(Directory.GetCurrentDirectory(), options.TargetProject);
+            var projectDirectory = Path.GetDirectoryName(projectFile);
+            var properties = ReadProperties(projectFile, options.Configuration, options.Framework?.Framework);
 
-            var configuration = options.Configuration ?? "Debug";
+            var hasNetCoreAppFramework = false;
+            if (properties.TryGetValue(targetFrameworkProperty, out var framework)
+                && !string.IsNullOrEmpty(framework)
+                && framework.StartsWith(netCoreAppFramework))
+            {
+                hasNetCoreAppFramework = true;
+            }
 
+            if (properties.TryGetValue(targetFrameworksProperty, out var tfms)
+                && !string.IsNullOrEmpty(tfms))
+            {
+                foreach (var tfm in tfms.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (tfm.StartsWith(netCoreAppFramework))
+                    {
+                        hasNetCoreAppFramework = true;
+                        break;
+                    }
+                }
+            }
 
-            var outputPath = project.GetOutputPaths(configuration, /* buildBasePath: */ null, null);
-
-            var isExecutable = project.ProjectFile.GetCompilerOptions(project.TargetFramework, configuration).EmitEntryPoint
-                            ?? project.ProjectFile.GetCompilerOptions(null, configuration).EmitEntryPoint.GetValueOrDefault();
-
-
-            Console.WriteLine(project.TargetFramework.DotNetFrameworkName);
-            Console.WriteLine(PlatformServices.Default.Application.RuntimeFramework.FullName);
-
-            var assemblyPath = isExecutable && (project.IsPortable || options.Framework.IsDesktop())
-                ? outputPath.RuntimeFiles.Executable
-                : outputPath.RuntimeFiles.Assembly;
-
-            Console.WriteLine(project.PackagesDirectory);
-
-            var tempProjectPath = Path.Combine(outputPath.IntermediateOutputDirectoryPath, "SwaggerGen");
-
+            var tempProjectPath = Path.Combine(projectDirectory, properties[intermediateOutputPathProperty], "SwaggerGen");
             if (!Directory.Exists(tempProjectPath))
             {
                 Directory.CreateDirectory(tempProjectPath);
             }
 
-
-
             var tempProjectPathUri = new Uri(tempProjectPath);
-
-            var projectDependency = tempProjectPathUri.MakeRelativeUri(new Uri(project.ProjectDirectory)).ToString();
 
             var generationContext = new
             {
-                AssemblyPath = assemblyPath,
-                ContentRoot = project.ProjectDirectory,
-                OutputPath = Path.IsPathRooted(options.OutputPath) ? options.OutputPath : Path.Combine(project.ProjectDirectory, options.OutputPath),
+                ProjectPath = projectFile,
+                IsNetCoreApp = hasNetCoreAppFramework && (options.Framework == null || options.Framework.Framework.StartsWith(netCoreAppFramework)),
+                AssemblyName = properties[assemblyNameProperty],
+                ContentRoot = projectDirectory,
                 ApiVersion = options.ApiVersion,
-                ProjectDependency = new DirectoryInfo(project.ProjectDirectory).Name,
-                IsNetCoreApp = project.TargetFramework.DotNetFrameworkName == ".NETCoreApp,Version=v1.0"
+                OutputPath = Path.IsPathRooted(options.OutputPath) ? options.OutputPath : Path.Combine(projectDirectory, options.OutputPath),
             };
 
-            var ass = Assembly.GetEntryAssembly();
-
-            foreach (var filePath in ass.GetManifestResourceNames().Where(x => x.EndsWith(".hbs")))
+            var assembly = typeof(Program).GetTypeInfo().Assembly;
+            foreach (var filePath in assembly.GetManifestResourceNames().Where(x => x.EndsWith(".hbs")))
             {
-                using (var reader = new StreamReader(ass.GetManifestResourceStream(filePath)))
+                using (var reader = new StreamReader(assembly.GetManifestResourceStream(filePath)))
                 {
                     var template = Handlebars.Compile(reader.ReadToEnd());
-                    File.WriteAllText(Path.Combine(tempProjectPath, Path.GetFileNameWithoutExtension(filePath.Replace("GeekLearning.DotNet.Swashbuckle.ProjectTemplate.", ""))), template(generationContext));
+                    File.WriteAllText(
+                        Path.Combine(
+                            tempProjectPath, 
+                            Path.GetFileNameWithoutExtension(
+                                filePath
+                                    .Replace("GeekLearning.DotNet.Swashbuckle.ProjectTemplate.", "")
+                                    .Replace(".cst", ".cs"))), 
+                        template(generationContext));
                 }
             }
 
@@ -96,31 +91,108 @@ namespace GeekLearning.DotNet.Swashbuckle
             var result = restore.Execute();
             if (result.ExitCode == 0)
             {
-                var run = Command.CreateDotNet("run", new string[] { }, configuration: configuration);
+                var run = Command.CreateDotNet("run", new string[] { }, configuration: options.Configuration);
                 run.WorkingDirectory(tempProjectPath);
                 result = run.Execute();
-
             }
 
             Directory.Delete(tempProjectPath, true);
         }
 
-
-
-
-        public static ProjectContext Create(string filePath,
-          NuGetFramework framework)
+        private static string FindMsBuildProject(string searchBase, string project)
         {
-            return SelectCompatibleFramework(
-                 framework,
-                 ProjectContext.CreateContextForEachFramework(filePath,
-                     runtimeIdentifiers: Microsoft.DotNet.Cli.Utils.RuntimeEnvironmentRidExtensions.GetAllCandidateRuntimeIdentifiers()));
+            if (string.IsNullOrEmpty(searchBase))
+            {
+                throw new ArgumentException("Value cannot be null or an empty string.", nameof(searchBase));
+            }
+
+            var projectPath = project ?? searchBase;
+
+            if (!Path.IsPathRooted(projectPath))
+            {
+                projectPath = Path.Combine(searchBase, projectPath);
+            }
+
+            if (Directory.Exists(projectPath))
+            {
+                var projects = Directory.EnumerateFileSystemEntries(projectPath, "*.*proj", SearchOption.TopDirectoryOnly)
+                    .Where(f => !".xproj".Equals(Path.GetExtension(f), StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                if (projects.Count > 1)
+                {
+                    throw new FileNotFoundException($"Multiple MSBuild project files found in '{projectPath}'. Specify which to use with the --project option.");
+                }
+
+                if (projects.Count == 0)
+                {
+                    throw new FileNotFoundException($"Could not find a MSBuild project file in '{projectPath}'. Specify which project to use with the --project option.");
+                }
+
+                return projects[0];
+            }
+
+            if (!File.Exists(projectPath))
+            {
+                throw new FileNotFoundException($"The project file '{projectPath}' does not exist.");
+            }
+
+            return projectPath;
         }
 
-        private static ProjectContext SelectCompatibleFramework(NuGetFramework target, IEnumerable<ProjectContext> contexts)
+        private static Dictionary<string, string> ReadProperties(string projectFile, string configuration, string framework)
         {
-            return NuGetFrameworkUtility.GetNearest(contexts, target ?? FrameworkConstants.CommonFrameworks.NetCoreApp10, f => f.TargetFramework)
-                   ?? contexts.First();
+            var targetFileName = Path.GetFileName(projectFile) + ".dotnet-names.targets";
+            var projectExtPath = Path.Combine(Path.GetDirectoryName(projectFile), "obj");
+            var targetFile = Path.Combine(projectExtPath, targetFileName);
+
+            File.WriteAllText(targetFile,
+$@"<Project>
+      <Target Name=""_GetDotNetNames"">
+         <ItemGroup>
+            <_DotNetNamesOutput Include=""{assemblyNameProperty}: $({assemblyNameProperty})"" />
+            <_DotNetNamesOutput Include=""{targetFrameworkProperty}: $({targetFrameworkProperty})"" />
+            <_DotNetNamesOutput Include=""{targetFrameworksProperty}: $({targetFrameworksProperty})"" />
+            <_DotNetNamesOutput Include=""{intermediateOutputPathProperty}: $({intermediateOutputPathProperty})"" />
+         </ItemGroup>
+         <WriteLinesToFile File=""$(_DotNetNamesFile)"" Lines=""@(_DotNetNamesOutput)"" Overwrite=""true"" />
+      </Target>
+  </Project>");
+
+            var additionnalParameters = string.Empty;
+            if (!string.IsNullOrEmpty(framework))
+            {
+                additionnalParameters = $"/p:{targetFrameworkProperty}={framework}";
+            }
+
+            var tmpFile = Path.GetTempFileName();
+            var psi = new ProcessStartInfo
+            {
+                FileName = "dotnet",
+                Arguments = $"msbuild \"{projectFile}\" /p:Configuration={configuration} /t:_GetDotNetNames /nologo \"/p:_DotNetNamesFile={tmpFile}\" {additionnalParameters}"
+            };
+
+            var process = Process.Start(psi);
+            process.WaitForExit();
+            if (process.ExitCode != 0)
+            {
+                throw new Exception("Invoking MSBuild target failed");
+            }
+
+            var lines = File.ReadAllLines(tmpFile);
+            File.Delete(tmpFile);
+
+            var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var line in lines)
+            {
+                var idx = line.IndexOf(':');
+                if (idx <= 0) continue;
+                var name = line.Substring(0, idx)?.Trim();
+                var value = line.Substring(idx + 1)?.Trim();
+                properties.Add(name, value);
+            }
+
+            return properties;
         }
     }
 }

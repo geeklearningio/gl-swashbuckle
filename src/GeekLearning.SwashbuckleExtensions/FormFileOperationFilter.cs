@@ -1,19 +1,14 @@
-﻿/// <summary>
-/// Thanks to RehanSaeed - https://github.com/domaindrivendev/Ahoy/issues/193
-/// </summary>
-
-
-namespace GeekLearning.SwashbuckleExtensions
+﻿namespace GeekLearning.SwashbuckleExtensions
 {
     using Microsoft.AspNetCore.Http;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using System.Threading.Tasks;
 
+    /// <summary>
+    /// Thanks to RehanSaeed - https://github.com/domaindrivendev/Ahoy/issues/193
+    /// </summary>
     public class FormFileOperationFilter : IOperationFilter
     {
         private const string FormDataMimeType = "multipart/form-data";
@@ -31,6 +26,7 @@ namespace GeekLearning.SwashbuckleExtensions
                         .OfType<NonBodyParameter>()
                         .Where(x => FormFilePropertyNames.Contains(x.Name))
                         .ToArray();
+
                     var index = operation.Parameters.IndexOf(formFileParameters.First());
                     foreach (var formFileParameter in formFileParameters)
                     {
@@ -44,6 +40,7 @@ namespace GeekLearning.SwashbuckleExtensions
                         .Where(x => x.ParameterType == typeof(IFormFile))
                         .Select(x => x.Name)
                         .First();
+
                     var parameter = new NonBodyParameter()
                     {
                         Name = formFileParameterName,
@@ -52,6 +49,7 @@ namespace GeekLearning.SwashbuckleExtensions
                         Required = true,
                         Type = "file"
                     };
+
                     operation.Parameters.Insert(index, parameter);
 
                     if (!operation.Consumes.Contains(FormDataMimeType))

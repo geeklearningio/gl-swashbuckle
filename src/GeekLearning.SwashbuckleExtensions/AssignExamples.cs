@@ -15,24 +15,18 @@
 
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            Response successResponse;
+            var isSuccessResponse = operation.Responses.TryGetValue("200", out Response successResponse)
+                || operation.Responses.TryGetValue("204", out successResponse);
 
-            if (operation.Responses.TryGetValue("200", out successResponse) || operation.Responses.TryGetValue("204", out successResponse))
-            {
-            }
-
-            Dictionary<string, Dictionary<string, object>> actionSamples;
-
-            if (this.builder.Examples.TryGetValue(context.ApiDescription.ActionDescriptor.DisplayName, out actionSamples))
+            if (this.builder.Examples.TryGetValue(context.ApiDescription.ActionDescriptor.DisplayName, out Dictionary<string, Dictionary<string, object>> actionSamples))
             {
                 foreach (var statusSamples in actionSamples)
                 {
-                    Response statusResponse;
-                    if (!operation.Responses.TryGetValue(statusSamples.Key, out statusResponse))
+                    if (!operation.Responses.TryGetValue(statusSamples.Key, out Response statusResponse))
                     {
                         statusResponse = new Response();
                         operation.Responses[statusSamples.Key] = statusResponse;
-                        if (successResponse != null)
+                        if (isSuccessResponse)
                         {
                             statusResponse.Schema = successResponse.Schema;
                         }
