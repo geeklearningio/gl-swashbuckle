@@ -7,7 +7,7 @@
     <PackageId>GeekLearning.SwashbuckleExtensions</PackageId>
     <VersionPrefix>0.0.1</VersionPrefix>
     <Authors>Geek Learning;Cyprien Autexier;Adrien Siffermann</Authors>
-    <Description>Swashbuckle extensions to add examples abd security requirements in the generated Swagger file.</Description>
+    <Description>Swashbuckle extensions to add examples and security requirements in the generated Swagger file.</Description>    
     <PackageProjectUrl>https://github.com/geeklearningio/gl-swashbuckle</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/geeklearningio/gl-swashbuckle/blob/master/LICENSE.md</PackageLicenseUrl>
   </PropertyGroup>

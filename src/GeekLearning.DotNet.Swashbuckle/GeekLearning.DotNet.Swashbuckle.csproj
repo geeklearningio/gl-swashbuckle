@@ -8,7 +8,9 @@
     <PackageId>GeekLearning.DotNet.Swashbuckle</PackageId>
     <VersionPrefix>0.0.1</VersionPrefix>
     <Authors>Geek Learning;Cyprien Autexier;Adrien Siffermann</Authors>
-    <Description>File Storage abstractions with providers.</Description>
+    <Description>Generate a Swagger JSON file for an offline ASP.NET Core project with Swashbuckle registered.</Description>
+    <PackageProjectUrl>https://github.com/geeklearningio/gl-swashbuckle</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/geeklearningio/gl-swashbuckle/blob/master/LICENSE.md</PackageLicenseUrl>
 
     <PackageType>DotnetCliTool</PackageType>
 

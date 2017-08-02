@@ -2,8 +2,8 @@
   "profiles": {
     "GeekLearning.DotNet.Swashbuckle": {
       "commandName": "Project",
-      "commandLineArgs": "-v v1 -so identity-swagger.json",
-      "workingDirectory": "C:\\Repos\\BPCE\\Identity-Server\\src\\Bpce.Identity.Web"
+      "commandLineArgs": "-sv v1 -so swagger.json",
+      "workingDirectory": ""
     }
   }
 }

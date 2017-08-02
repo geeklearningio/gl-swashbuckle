@@ -48,9 +48,7 @@
 
                 var actionId = methodCall.Method.DeclaringType.FullName + "." + methodCall.Method.Name;
 
-                Dictionary<string, Dictionary<string, object>> actionResponses;
-
-                if (!examples.TryGetValue(actionId, out actionResponses))
+                if (!examples.TryGetValue(actionId, out Dictionary<string, Dictionary<string, object>> actionResponses))
                 {
                     actionResponses = new Dictionary<string, Dictionary<string, object>>();
                     examples[actionId] = actionResponses;
@@ -72,9 +70,7 @@
 
                 var actionId = methodCall.Method.DeclaringType.FullName + "." + methodCall.Method.Name;
 
-                Dictionary<string, Dictionary<string, object>> actionResponses;
-
-                if (!examples.TryGetValue(actionId, out actionResponses))
+                if (!examples.TryGetValue(actionId, out Dictionary<string, Dictionary<string, object>> actionResponses))
                 {
                     actionResponses = new Dictionary<string, Dictionary<string, object>>();
                     examples[actionId] = actionResponses;
@@ -94,9 +90,7 @@
 
                 public ActionContext<TReturn> Json(TReturn data, string status = "200")
                 {
-                    Dictionary<string, object> statusResponses;
-
-                    if (!actionResponses.TryGetValue(status, out statusResponses))
+                    if (!actionResponses.TryGetValue(status, out Dictionary<string, object> statusResponses))
                     {
                         statusResponses = new Dictionary<string, object>();
                         actionResponses[status] = statusResponses;

@@ -2,8 +2,6 @@
 {
     using HandlebarsDotNet;
     using Microsoft.DotNet.Cli.Utils;
-    using Microsoft.Extensions.PlatformAbstractions;
-    using NuGet.Frameworks;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -22,6 +20,10 @@
         public static void Main(string[] args)
         {
             var options = CommandLineOptions.Parse(args);
+            if (options.IsHelp)
+            {
+                return;
+            }
 
             var projectFile = FindMsBuildProject(Directory.GetCurrentDirectory(), options.TargetProject);
             var projectDirectory = Path.GetDirectoryName(projectFile);
