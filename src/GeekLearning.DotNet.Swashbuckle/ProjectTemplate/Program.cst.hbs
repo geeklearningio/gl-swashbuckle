@@ -41,27 +41,32 @@
                 .UseContentRoot(contentRoot)
                 .UseStartup(startup));
 
+            var scopeFactory = testServer.Host.Services.GetRequiredService<IServiceScopeFactory>();
             var mvcJsonOptions = testServer.Host.Services.GetRequiredService<IOptions<MvcJsonOptions>>();
-            var swaggerProvider = testServer.Host.Services.GetService<ISwaggerProvider>();
-            if (swaggerProvider == null)
-            {
-                Console.WriteLine("Error: Swashbuckle.AspNetCore does not seem to be referenced and configured in the targeted project. Unable to get ISwaggerProvider service.");
-                return (int)ExitCodes.SwashbuckleNotFound;
-            }
 
-            var swaggerSerializer = new JsonSerializer
+            using(var scope = scopeFactory.CreateScope())
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new SwaggerContractResolver(mvcJsonOptions.Value.SerializerSettings)
-            };
-
-            var document = swaggerProvider.GetSwagger(apiVersion);
-
-            using (var fs = new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite))
-            {
-                using (var writer = new StreamWriter(fs))
+                var swaggerProvider = scope.ServiceProvider.GetService<ISwaggerProvider>();
+                if (swaggerProvider == null)
                 {
-                    swaggerSerializer.Serialize(writer, document);
+                    Console.WriteLine("Error: Swashbuckle.AspNetCore does not seem to be referenced and configured in the targeted project. Unable to get ISwaggerProvider service.");
+                    return (int)ExitCodes.SwashbuckleNotFound;
+                }
+
+                var swaggerSerializer = new JsonSerializer
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ContractResolver = new SwaggerContractResolver(mvcJsonOptions.Value.SerializerSettings)
+                };
+
+                var document = swaggerProvider.GetSwagger(apiVersion);
+
+                using (var fs = new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite))
+                {
+                    using (var writer = new StreamWriter(fs))
+                    {
+                        swaggerSerializer.Serialize(writer, document);
+                    }
                 }
             }
 
