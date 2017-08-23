@@ -21,11 +21,18 @@
                 if (operation.Parameters == null)
                     operation.Parameters = new List<IParameter>();
 
+                var parametersToClean = operation.Parameters.OfType<SwaggerFormParameter>();
+
+                foreach (var parameter in parametersToClean)
+                {
+                    operation.Parameters.Remove(parameter);
+                }
+
                 if (operation.Consumes.Count == 0)
                     operation.Consumes.Add("multipart/form-data");
 
                 operation.Parameters.Add(
-                    new NonBodyParameter
+                    new SwaggerFormParameter
                     {
                         Name = attr.Name,
                         Description = attr.Description,
@@ -35,6 +42,12 @@
                     });
 
             }
+        }
+
+
+        private class SwaggerFormParameter : NonBodyParameter
+        {
+
         }
     }
 }
