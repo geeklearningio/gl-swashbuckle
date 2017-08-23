@@ -15,7 +15,7 @@
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            var requestAttributes = context.ApiDescription.ActionAttributes().Concat(context.ApiDescription.ControllerAttributes()).OfType<SwaggerFormParameter>();
+            var requestAttributes = context.ApiDescription.ActionAttributes().Concat(context.ApiDescription.ControllerAttributes()).OfType<SwaggerFormParameterAttribute>();
             foreach (var attr in requestAttributes)
             {
                 if (operation.Parameters == null)
