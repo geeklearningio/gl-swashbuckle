@@ -15,7 +15,7 @@ This project provides extensions and tools for Swashbuckle in an ASP.NET Core ap
 * **DropTextPlainConsumes**: delete the `text/plain` content type from the `consumes` operation list
 * **DropTextPlainProduces**: delete the `text/plain` content type from the `produces` operation list
 * **FormFileOperationFilter**: detect `IFormFile` parameters to properly set the Swagger parameter type
-* **SwaggerFormOperationFilter**: reads `SwaggerFormParameter` attributes allowing you to specify additional elements not necesseraly present in the ApiDescription.
+* **SwaggerFormOperationFilter**: read `SwaggerFormParameter` attributes allowing you to specify additional elements not necesseraly present in the ApiDescription.
 
 ### Document Filters
 
