@@ -21,7 +21,7 @@
                 if (operation.Parameters == null)
                     operation.Parameters = new List<IParameter>();
 
-                var parametersToClean = operation.Parameters.OfType<SwaggerFormParameter>();
+                var parametersToClean = operation.Parameters.OfType<SwaggerFormParameter>().ToArray();
 
                 foreach (var parameter in parametersToClean)
                 {
