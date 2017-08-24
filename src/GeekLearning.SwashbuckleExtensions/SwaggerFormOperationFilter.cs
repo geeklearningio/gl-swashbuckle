@@ -15,8 +15,10 @@
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
+
             var requestAttributes = context.ApiDescription.ActionAttributes().Concat(context.ApiDescription.ControllerAttributes()).OfType<SwaggerFormParameterAttribute>();
-            foreach (var attr in requestAttributes)
+
+            if (requestAttributes.Any())
             {
                 if (operation.Parameters == null)
                     operation.Parameters = new List<IParameter>();
@@ -30,7 +32,10 @@
 
                 if (operation.Consumes.Count == 0)
                     operation.Consumes.Add("multipart/form-data");
+            }
 
+            foreach (var attr in requestAttributes)
+            {
                 operation.Parameters.Add(
                     new SwaggerFormParameter
                     {
