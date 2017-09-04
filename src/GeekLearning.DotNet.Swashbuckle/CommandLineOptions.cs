@@ -25,6 +25,8 @@
 
         public string ApiVersion { get; set; }
 
+        public string AspnetcoreEnvironment { get; set; }
+
         public static CommandLineOptions Parse(string[] args)
         {
             var app = new CommandLineApplication(throwOnUnexpectedArg: false)
@@ -70,6 +72,12 @@
                 "The API version you want to generate Swagger definition for.",
                 CommandOptionType.SingleValue);
 
+            var aspnetcoreEnvironment = app.Option(
+                "-av|--aspnetcore-environement <aspnetcore_environement>",
+                "Optional override for ASPNETCORE_ENVIRONMENT variable",
+                CommandOptionType.SingleValue
+                );
+
             app.VersionOption("--version", () => assemblyVersion);
 
             app.HelpOption("-h|--help");
@@ -82,6 +90,7 @@
                 options.OutputPath = output.Value() ?? "swagger.json";
                 options.ApiVersion = apiVersion.Value() ?? "v1";
                 options.RemainingArguments = app.RemainingArguments;
+                options.AspnetcoreEnvironment = aspnetcoreEnvironment.Value(); 
                 return 0;
             });
         }

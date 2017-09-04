@@ -61,7 +61,8 @@
             var generationContext = new
             {
                 ProjectPath = projectFile,
-                IsNetCoreApp = hasNetCoreAppFramework && (options.Framework == null || options.Framework.Framework.StartsWith(netCoreAppFramework)),
+                //IsNetCoreApp = hasNetCoreAppFramework && (options.Framework == null || options.Framework.Framework.StartsWith(netCoreAppFramework)),
+                TargetFramework = properties[targetFrameworkProperty],
                 AssemblyName = properties[assemblyNameProperty],
                 ContentRoot = projectDirectory,
                 ApiVersion = options.ApiVersion,
@@ -92,6 +93,10 @@
             if (result.ExitCode == 0)
             {
                 var run = Command.CreateDotNet("run", new string[] { }, configuration: options.Configuration);
+                if (!string.IsNullOrEmpty(options.AspnetcoreEnvironment))
+                {
+                    run.EnvironmentVariable("ASPNETCORE_ENVIRONMENT", options.AspnetcoreEnvironment);
+                }
                 run.WorkingDirectory(tempProjectPath);
                 result = run.Execute();
             }
