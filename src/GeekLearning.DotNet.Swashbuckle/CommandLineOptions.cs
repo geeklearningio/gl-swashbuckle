@@ -1,32 +1,34 @@
-﻿using Microsoft.DotNet.Cli.Utils;
-using Microsoft.Extensions.CommandLineUtils;
-using NuGet.Frameworks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-
-namespace GeekLearning.DotNet.Swashbuckle
+﻿namespace GeekLearning.DotNet.Swashbuckle
 {
+    using Microsoft.DotNet.Cli.Utils;
+    using Microsoft.Extensions.CommandLineUtils;
+    using NuGet.Frameworks;
+    using System.Collections.Generic;
+    using System.Reflection;
+
     public class CommandLineOptions
     {
+        private static readonly Assembly thisAssembly = typeof(CommandLineOptions).GetTypeInfo().Assembly;
+        private static readonly string assemblyVersion = thisAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? thisAssembly.GetName().Version.ToString();
+
         public string Configuration { get; set; }
-        public string StartupProject { get; set; }
+
         public string TargetProject { get; set; }
+
         public NuGetFramework Framework { get; set; }
-        public string BuildBasePath { get; set; }
+
         public string OutputPath { get; set; }
-        public string BuildOutputPath { get; set; }
-        public bool NoBuild { get; set; }
+
         public IList<string> RemainingArguments { get; set; }
-        public bool IsVerbose { get; set; }
+
         public bool IsHelp { get; set; }
+
         public string ApiVersion { get; set; }
+
+        public string AspnetcoreEnvironment { get; set; }
 
         public static CommandLineOptions Parse(string[] args)
         {
-            // ReSharper disable once ArgumentsStyleLiteral
             var app = new CommandLineApplication(throwOnUnexpectedArg: false)
             {
                 Name = "dotnet swashbuckle",
@@ -47,58 +49,50 @@ namespace GeekLearning.DotNet.Swashbuckle
         {
             var project = app.Option(
                 "-p|--project <project>",
-                "The project to target (defaults to the project in the current directory). Can be a path to a project.json or a project directory.",
+                "The project to target (defaults to the project in the current directory). Can be a path to a csproj file or a project directory. The targeted project must be an ASP.NET Core application, with a `Startup` class and with the Swashbuckle.AspNetCore services registered.",
                 CommandOptionType.SingleValue);
-            var startupProject = app.Option(
-                "-s|--startup-project <project>",
-                "The path to the project containing Startup (defaults to the target project). Can be a path to a project.json or a project directory.",
-                CommandOptionType.SingleValue);
-            var configuration = app.Option(
-                "--configuration <configuration>",
-                $"Configuration under which to load (defaults to {Constants.DefaultConfiguration})",
-                CommandOptionType.SingleValue);
+
             var framework = app.Option(
                 "-f|--framework <framework>",
-                $"Target framework to load from the startup project (defaults to the framework most compatible with {FrameworkConstants.CommonFrameworks.NetCoreApp10}).",
+                $"Compiles for a specific framework. The framework must be defined in the project file.",
                 CommandOptionType.SingleValue);
-            var buildOutput = app.Option(
-               "-o|--output <output_file>",
-               "File in which to write swagger schema",
+
+            var configuration = app.Option(
+                "-c|--configuration <configuration>",
+                $"Defines the build configuration. If omitted, the build configuration defaults to `{Constants.DefaultConfiguration}`. Use `Release` build a Release configuration.",
                 CommandOptionType.SingleValue);
+
             var output = app.Option(
                 "-so|--swagger-output <swagger_output_file>",
-                "File in which to write swagger schema",
+                "File in which to write Swagger schema.",
                 CommandOptionType.SingleValue);
+
             var apiVersion = app.Option(
-              "-v|--api-version <api_version>",
-              "The api version you want to generate swagger definition for.",
-              CommandOptionType.SingleValue);
-            var noBuild = app.Option("--no-build", "Do not build before executing.", CommandOptionType.NoValue);
-            var verbose = app.Option("--verbose", "Show verbose output", CommandOptionType.NoValue);
-            app.VersionOption("--version", () => _assemblyVersion);
+                "-sv|--swagger-api-version <api_version>",
+                "The API version you want to generate Swagger definition for.",
+                CommandOptionType.SingleValue);
+
+            var aspnetcoreEnvironment = app.Option(
+                "-av|--aspnetcore-environement <aspnetcore_environement>",
+                "Optional override for ASPNETCORE_ENVIRONMENT variable",
+                CommandOptionType.SingleValue
+                );
+
+            app.VersionOption("--version", () => assemblyVersion);
+
+            app.HelpOption("-h|--help");
 
             app.OnExecute(() =>
             {
                 options.TargetProject = project.Value();
-                options.StartupProject = startupProject.Value();
-                options.Configuration = configuration.Value();
-                options.Framework = framework.HasValue()
-                    ? NuGetFramework.Parse(framework.Value())
-                    : null;
-                options.BuildOutputPath = output.Value();
-                options.OutputPath = output.Value();
-                options.NoBuild = noBuild.HasValue();
-                options.IsVerbose = verbose.HasValue();
-                options.ApiVersion = apiVersion.Value();
+                options.Configuration = configuration.Value() ?? Constants.DefaultConfiguration;
+                options.Framework = framework.HasValue() ? NuGetFramework.Parse(framework.Value()) : null;
+                options.OutputPath = output.Value() ?? "swagger.json";
+                options.ApiVersion = apiVersion.Value() ?? "v1";
                 options.RemainingArguments = app.RemainingArguments;
+                options.AspnetcoreEnvironment = aspnetcoreEnvironment.Value(); 
                 return 0;
             });
         }
-
-        private static readonly Assembly _thisAssembly = typeof(CommandLineOptions).GetTypeInfo().Assembly;
-
-        private static readonly string _assemblyVersion = _thisAssembly
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-                                                             ?? _thisAssembly.GetName().Version.ToString();
     }
 }
