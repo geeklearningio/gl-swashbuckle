@@ -2,8 +2,8 @@
   "profiles": {
     "GeekLearning.DotNet.Swashbuckle": {
       "commandName": "Project",
-      "commandLineArgs": "-sv v1 -so swagger.json",
-      "workingDirectory": ""
+      "commandLineArgs": "-sv 1.0 -so \"C:\\Users\\cyprien.autexier\\Repos\\LucsanWorkbench\\Lucsan.Workbench\\Lucsan.Workbench.WebApp\\swagger.json\"",
+      "workingDirectory": "C:\\Users\\cyprien.autexier\\Repos\\LucsanWorkbench\\Lucsan.Workbench\\Lucsan.Workbench.WebApp"
     }
   }
 }
