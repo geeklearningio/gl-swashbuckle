@@ -36,7 +36,7 @@ namespace GeekLearning.SwashbuckleExtensions
            
             if (nullable || !omitFalseValue)
             {
-                model.Extensions.Add("x-nullable", nullable);
+                model.Extensions["x-nullable"] = nullable;
             }
         }
     }
