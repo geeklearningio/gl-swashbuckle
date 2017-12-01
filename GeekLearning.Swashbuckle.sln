@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekLearning.SwashbuckleExt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekLearning.DotNet.Swashbuckle", "src\GeekLearning.DotNet.Swashbuckle\GeekLearning.DotNet.Swashbuckle.csproj", "{58822602-5E9F-4441-A0A4-77F4562F5890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeekLearning.Domain.SwahbuckleExtensions", "GeekLearning.Domain.SwahbuckleExtensions\GeekLearning.Domain.SwahbuckleExtensions.csproj", "{AB5F6BE6-27DC-4A3A-AA1F-F85F5F4C9569}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeekLearning.Domain.SwahbuckleExtensions", "src\GeekLearning.Domain.SwahbuckleExtensions\GeekLearning.Domain.SwahbuckleExtensions.csproj", "{AB5F6BE6-27DC-4A3A-AA1F-F85F5F4C9569}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
