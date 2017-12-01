@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A01AC02E-F07B-43B6-AB58-631273BBC278}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,6 +15,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekLearning.SwashbuckleExtensions", "src\GeekLearning.SwashbuckleExtensions\GeekLearning.SwashbuckleExtensions.csproj", "{1BD5505A-E4B4-4047-8421-B097B9CC1424}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeekLearning.DotNet.Swashbuckle", "src\GeekLearning.DotNet.Swashbuckle\GeekLearning.DotNet.Swashbuckle.csproj", "{58822602-5E9F-4441-A0A4-77F4562F5890}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeekLearning.Domain.SwahbuckleExtensions", "GeekLearning.Domain.SwahbuckleExtensions\GeekLearning.Domain.SwahbuckleExtensions.csproj", "{AB5F6BE6-27DC-4A3A-AA1F-F85F5F4C9569}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,8 +32,15 @@ Global
 		{58822602-5E9F-4441-A0A4-77F4562F5890}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58822602-5E9F-4441-A0A4-77F4562F5890}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58822602-5E9F-4441-A0A4-77F4562F5890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB5F6BE6-27DC-4A3A-AA1F-F85F5F4C9569}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB5F6BE6-27DC-4A3A-AA1F-F85F5F4C9569}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB5F6BE6-27DC-4A3A-AA1F-F85F5F4C9569}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB5F6BE6-27DC-4A3A-AA1F-F85F5F4C9569}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F75B29C4-72BA-4A1F-B088-58BB53BF2D3F}
 	EndGlobalSection
 EndGlobal
