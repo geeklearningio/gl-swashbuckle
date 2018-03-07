@@ -16,6 +16,7 @@
         private const string targetFrameworksProperty = "TargetFrameworks";
         private const string intermediateOutputPathProperty = "IntermediateOutputPath";
         private const string assemblyNameProperty = "AssemblyName";
+        private const string referencesProperty = "References";
 
         public static void Main(string[] args)
         {
@@ -27,7 +28,7 @@
 
             var projectFile = FindMsBuildProject(Directory.GetCurrentDirectory(), options.TargetProject);
             var projectDirectory = Path.GetDirectoryName(projectFile);
-            var properties = ReadProperties(projectFile, options.Configuration, options.Framework?.Framework);
+            var (properties, references) = ReadProperties(projectFile, options.Configuration, options.Framework?.Framework);
 
             var hasNetCoreAppFramework = false;
             if (properties.TryGetValue(targetFrameworkProperty, out var framework)
@@ -67,6 +68,7 @@
                 ContentRoot = projectDirectory,
                 ApiVersion = options.ApiVersion,
                 OutputPath = Path.IsPathRooted(options.OutputPath) ? options.OutputPath : Path.Combine(projectDirectory, options.OutputPath),
+                References = references.ToDictionary(x=> x.Key.Replace(".", ""), y=> y.Value)
             };
 
             var assembly = typeof(Program).GetTypeInfo().Assembly;
@@ -145,7 +147,7 @@
             return projectPath;
         }
 
-        private static Dictionary<string, string> ReadProperties(string projectFile, string configuration, string framework)
+        private static (Dictionary<string, string> Properties, Dictionary<string, string> References)  ReadProperties(string projectFile, string configuration, string framework)
         {
             var targetFileName = Path.GetFileName(projectFile) + ".dotnet-names.targets";
             var projectExtPath = Path.Combine(Path.GetDirectoryName(projectFile), "obj");
@@ -153,7 +155,7 @@
 
             File.WriteAllText(targetFile,
 $@"<Project>
-      <Target Name=""_GetDotNetNames"">
+      <Target Name=""_GetDotNetNames"" DependsOnTargets=""ResolvePackageDependenciesDesignTime"">
          <ItemGroup>
             <_DotNetNamesOutput Include=""{assemblyNameProperty}: $({assemblyNameProperty})"" />
             <_DotNetNamesOutput Include=""{targetFrameworkProperty}: $({targetFrameworkProperty})"" />
@@ -161,6 +163,7 @@ $@"<Project>
             <_DotNetNamesOutput Include=""{intermediateOutputPathProperty}: $({intermediateOutputPathProperty})"" />
          </ItemGroup>
          <WriteLinesToFile File=""$(_DotNetNamesFile)"" Lines=""@(_DotNetNamesOutput)"" Overwrite=""true"" />
+         <WriteLinesToFile File=""$(_DotNetReferencesFile)"" Lines=""@(_DependenciesDesignTime)"" Overwrite=""true"" />
       </Target>
   </Project>");
 
@@ -171,10 +174,11 @@ $@"<Project>
             }
 
             var tmpFile = Path.GetTempFileName();
+            var tmpFile2 = Path.GetTempFileName();
             var psi = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = $"msbuild \"{projectFile}\" /p:Configuration={configuration} /t:_GetDotNetNames /nologo \"/p:_DotNetNamesFile={tmpFile}\" {additionnalParameters}"
+                Arguments = $"msbuild \"{projectFile}\" /p:Configuration={configuration} /t:_GetDotNetNames /nologo \"/p:_DotNetNamesFile={tmpFile}\" \"/p:_DotNetReferencesFile={tmpFile2}\" {additionnalParameters}"
             };
 
             var process = Process.Start(psi);
@@ -197,7 +201,21 @@ $@"<Project>
                 properties.Add(name, value);
             }
 
-            return properties;
+
+            var referencesLines = File.ReadAllLines(tmpFile2);
+
+            var references = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var line in referencesLines)
+            {
+                var parts = line.Split('/');
+                if (parts.Length == 3)
+                {
+                    references.Add(parts[1], parts[2]);
+                }
+            }
+
+            return (properties, references);
         }
     }
 }

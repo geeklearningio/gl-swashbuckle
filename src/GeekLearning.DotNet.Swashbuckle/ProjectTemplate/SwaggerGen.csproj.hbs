@@ -6,9 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="*" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="*" />
-        <PackageReference Include="System.Runtime.Loader" Version="*" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="{{References.MicrosoftAspNetCoreTestHost}}{{#unless References.MicrosoftAspNetCoreTestHost}}*{{/unless}}" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="{{References.SwashbuckleAspNetCore}}" />
+        <PackageReference Include="System.Runtime.Loader" Version="{{References.SystemRuntimeLoader}}{{#unless References.SystemRuntimeLoader}}*{{/unless}}" />
     </ItemGroup>
 
     <ItemGroup>
