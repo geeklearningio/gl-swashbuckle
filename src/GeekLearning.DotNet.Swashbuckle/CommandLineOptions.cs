@@ -90,7 +90,7 @@
                 options.OutputPath = output.Value() ?? "swagger.json";
                 options.ApiVersion = apiVersion.Value() ?? "v1";
                 options.RemainingArguments = app.RemainingArguments;
-                options.AspnetcoreEnvironment = aspnetcoreEnvironment.Value(); 
+                options.AspnetcoreEnvironment = aspnetcoreEnvironment.Value();
                 return 0;
             });
         }

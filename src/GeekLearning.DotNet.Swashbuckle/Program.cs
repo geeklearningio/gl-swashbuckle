@@ -131,19 +131,20 @@
             var projectExtPath = Path.Combine(Path.GetDirectoryName(projectFile), "obj");
             var targetFile = Path.Combine(projectExtPath, targetFileName);
 
-            File.WriteAllText(targetFile,
-$@"<Project>
-      <Target Name=""_GetDotNetNames"" DependsOnTargets=""ResolvePackageDependenciesDesignTime"">
-         <ItemGroup>
-            <_DotNetNamesOutput Include=""{assemblyNameProperty}: $({assemblyNameProperty})"" />
-            <_DotNetNamesOutput Include=""{targetFrameworkProperty}: $({targetFrameworkProperty})"" />
-            <_DotNetNamesOutput Include=""{targetFrameworksProperty}: $({targetFrameworksProperty})"" />
-            <_DotNetNamesOutput Include=""{intermediateOutputPathProperty}: $({intermediateOutputPathProperty})"" />
-         </ItemGroup>
-         <WriteLinesToFile File=""$(_DotNetNamesFile)"" Lines=""@(_DotNetNamesOutput)"" Overwrite=""true"" />
-         <WriteLinesToFile File=""$(_DotNetReferencesFile)"" Lines=""@(_DependenciesDesignTime)"" Overwrite=""true"" />
-      </Target>
-  </Project>");
+            File.WriteAllText(
+                targetFile,
+                $@"<Project>
+                      <Target Name=""_GetDotNetNames"" DependsOnTargets=""ResolvePackageDependenciesDesignTime"">
+                         <ItemGroup>
+                            <_DotNetNamesOutput Include=""{assemblyNameProperty}: $({assemblyNameProperty})"" />
+                            <_DotNetNamesOutput Include=""{targetFrameworkProperty}: $({targetFrameworkProperty})"" />
+                            <_DotNetNamesOutput Include=""{targetFrameworksProperty}: $({targetFrameworksProperty})"" />
+                            <_DotNetNamesOutput Include=""{intermediateOutputPathProperty}: $({intermediateOutputPathProperty})"" />
+                         </ItemGroup>
+                         <WriteLinesToFile File=""$(_DotNetNamesFile)"" Lines=""@(_DotNetNamesOutput)"" Overwrite=""true"" />
+                         <WriteLinesToFile File=""$(_DotNetReferencesFile)"" Lines=""@(_DependenciesDesignTime)"" Overwrite=""true"" />
+                      </Target>
+                  </Project>");
 
             var additionnalParameters = string.Empty;
             if (!string.IsNullOrEmpty(framework))
