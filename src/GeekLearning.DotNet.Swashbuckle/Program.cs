@@ -30,27 +30,6 @@
             var projectDirectory = Path.GetDirectoryName(projectFile);
             var (properties, references) = ReadProperties(projectFile, options.Configuration, options.Framework?.Framework);
 
-            var hasNetCoreAppFramework = false;
-            if (properties.TryGetValue(targetFrameworkProperty, out var framework)
-                && !string.IsNullOrEmpty(framework)
-                && framework.StartsWith(netCoreAppFramework))
-            {
-                hasNetCoreAppFramework = true;
-            }
-
-            if (properties.TryGetValue(targetFrameworksProperty, out var tfms)
-                && !string.IsNullOrEmpty(tfms))
-            {
-                foreach (var tfm in tfms.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    if (tfm.StartsWith(netCoreAppFramework))
-                    {
-                        hasNetCoreAppFramework = true;
-                        break;
-                    }
-                }
-            }
-
             var tempProjectPath = Path.Combine(projectDirectory, properties[intermediateOutputPathProperty], "SwaggerGen");
             if (!Directory.Exists(tempProjectPath))
             {
@@ -62,13 +41,12 @@
             var generationContext = new
             {
                 ProjectPath = projectFile,
-                //IsNetCoreApp = hasNetCoreAppFramework && (options.Framework == null || options.Framework.Framework.StartsWith(netCoreAppFramework)),
                 TargetFramework = properties[targetFrameworkProperty],
                 AssemblyName = properties[assemblyNameProperty],
                 ContentRoot = projectDirectory,
-                ApiVersion = options.ApiVersion,
+                options.ApiVersion,
                 OutputPath = Path.IsPathRooted(options.OutputPath) ? options.OutputPath : Path.Combine(projectDirectory, options.OutputPath),
-                References = references.ToDictionary(x=> x.Key.Replace(".", ""), y=> y.Value)
+                References = references.ToDictionary(x => x.Key.Replace(".", ""), y => y.Value)
             };
 
             var assembly = typeof(Program).GetTypeInfo().Assembly;
@@ -79,11 +57,11 @@
                     var template = Handlebars.Compile(reader.ReadToEnd());
                     File.WriteAllText(
                         Path.Combine(
-                            tempProjectPath, 
+                            tempProjectPath,
                             Path.GetFileNameWithoutExtension(
                                 filePath
                                     .Replace("GeekLearning.DotNet.Swashbuckle.ProjectTemplate.", "")
-                                    .Replace(".cst", ".cs"))), 
+                                    .Replace(".cst", ".cs"))),
                         template(generationContext));
                 }
             }
@@ -99,6 +77,7 @@
                 {
                     run.EnvironmentVariable("ASPNETCORE_ENVIRONMENT", options.AspnetcoreEnvironment);
                 }
+
                 run.WorkingDirectory(tempProjectPath);
                 result = run.Execute();
             }
@@ -114,7 +93,6 @@
             }
 
             var projectPath = project ?? searchBase;
-
             if (!Path.IsPathRooted(projectPath))
             {
                 projectPath = Path.Combine(searchBase, projectPath);
@@ -147,25 +125,26 @@
             return projectPath;
         }
 
-        private static (Dictionary<string, string> Properties, Dictionary<string, string> References)  ReadProperties(string projectFile, string configuration, string framework)
+        private static (Dictionary<string, string> Properties, Dictionary<string, string> References) ReadProperties(string projectFile, string configuration, string framework)
         {
             var targetFileName = Path.GetFileName(projectFile) + ".dotnet-names.targets";
             var projectExtPath = Path.Combine(Path.GetDirectoryName(projectFile), "obj");
             var targetFile = Path.Combine(projectExtPath, targetFileName);
 
-            File.WriteAllText(targetFile,
-$@"<Project>
-      <Target Name=""_GetDotNetNames"" DependsOnTargets=""ResolvePackageDependenciesDesignTime"">
-         <ItemGroup>
-            <_DotNetNamesOutput Include=""{assemblyNameProperty}: $({assemblyNameProperty})"" />
-            <_DotNetNamesOutput Include=""{targetFrameworkProperty}: $({targetFrameworkProperty})"" />
-            <_DotNetNamesOutput Include=""{targetFrameworksProperty}: $({targetFrameworksProperty})"" />
-            <_DotNetNamesOutput Include=""{intermediateOutputPathProperty}: $({intermediateOutputPathProperty})"" />
-         </ItemGroup>
-         <WriteLinesToFile File=""$(_DotNetNamesFile)"" Lines=""@(_DotNetNamesOutput)"" Overwrite=""true"" />
-         <WriteLinesToFile File=""$(_DotNetReferencesFile)"" Lines=""@(_DependenciesDesignTime)"" Overwrite=""true"" />
-      </Target>
-  </Project>");
+            File.WriteAllText(
+                targetFile,
+                $@"<Project>
+                      <Target Name=""_GetDotNetNames"" DependsOnTargets=""ResolvePackageDependenciesDesignTime"">
+                         <ItemGroup>
+                            <_DotNetNamesOutput Include=""{assemblyNameProperty}: $({assemblyNameProperty})"" />
+                            <_DotNetNamesOutput Include=""{targetFrameworkProperty}: $({targetFrameworkProperty})"" />
+                            <_DotNetNamesOutput Include=""{targetFrameworksProperty}: $({targetFrameworksProperty})"" />
+                            <_DotNetNamesOutput Include=""{intermediateOutputPathProperty}: $({intermediateOutputPathProperty})"" />
+                         </ItemGroup>
+                         <WriteLinesToFile File=""$(_DotNetNamesFile)"" Lines=""@(_DotNetNamesOutput)"" Overwrite=""true"" />
+                         <WriteLinesToFile File=""$(_DotNetReferencesFile)"" Lines=""@(_DependenciesDesignTime)"" Overwrite=""true"" />
+                      </Target>
+                  </Project>");
 
             var additionnalParameters = string.Empty;
             if (!string.IsNullOrEmpty(framework))
@@ -173,12 +152,13 @@ $@"<Project>
                 additionnalParameters = $"/p:{targetFrameworkProperty}={framework}";
             }
 
-            var tmpFile = Path.GetTempFileName();
-            var tmpFile2 = Path.GetTempFileName();
+            var dotNetNamesFileName = Path.GetTempFileName();
+            var dotNetReferencesFileName = Path.GetTempFileName();
+
             var psi = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = $"msbuild \"{projectFile}\" /p:Configuration={configuration} /t:_GetDotNetNames /nologo \"/p:_DotNetNamesFile={tmpFile}\" \"/p:_DotNetReferencesFile={tmpFile2}\" {additionnalParameters}"
+                Arguments = $"msbuild \"{projectFile}\" /p:Configuration={configuration} /t:_GetDotNetNames /nologo \"/p:_DotNetNamesFile={dotNetNamesFileName}\" \"/p:_DotNetReferencesFile={dotNetReferencesFileName}\" {additionnalParameters}"
             };
 
             var process = Process.Start(psi);
@@ -188,22 +168,24 @@ $@"<Project>
                 throw new Exception("Invoking MSBuild target failed");
             }
 
-            var lines = File.ReadAllLines(tmpFile);
-            File.Delete(tmpFile);
+            var lines = File.ReadAllLines(dotNetNamesFileName);
+            File.Delete(dotNetNamesFileName);
 
             var properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var line in lines)
             {
-                var idx = line.IndexOf(':');
-                if (idx <= 0) continue;
-                var name = line.Substring(0, idx)?.Trim();
-                var value = line.Substring(idx + 1)?.Trim();
+                var index = line.IndexOf(':');
+                if (index <= 0)
+                {
+                    continue;
+                }
+
+                var name = line.Substring(0, index)?.Trim();
+                var value = line.Substring(index + 1)?.Trim();
                 properties.Add(name, value);
             }
 
-
-            var referencesLines = File.ReadAllLines(tmpFile2);
-
+            var referencesLines = File.ReadAllLines(dotNetReferencesFileName);
             var references = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var line in referencesLines)

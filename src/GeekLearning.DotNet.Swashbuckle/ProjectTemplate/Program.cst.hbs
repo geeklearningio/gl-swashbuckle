@@ -37,9 +37,18 @@
                 return (int)ExitCodes.StartupClassNotFound;
             }
 
-            var testServer = new TestServer(new WebHostBuilder()
+            var webHostBuilder = new WebHostBuilder()
                 .UseContentRoot(contentRoot)
-                .UseStartup(startup));
+                .UseStartup(startup);
+
+            var entryPointType = assembly.EntryPoint.DeclaringType;
+            var webHostBuilderConfigurator = entryPointType.GetMethod("ConfigureWebHostBuilder");
+            if (webHostBuilderConfigurator != null)
+            {
+                webHostBuilder = (IWebHostBuilder)webHostBuilderConfigurator.Invoke(null, new object[] { webHostBuilder });
+            }
+
+            var testServer = new TestServer(webHostBuilder);
 
             var scopeFactory = testServer.Host.Services.GetRequiredService<IServiceScopeFactory>();
             var mvcJsonOptions = testServer.Host.Services.GetRequiredService<IOptions<MvcJsonOptions>>();
