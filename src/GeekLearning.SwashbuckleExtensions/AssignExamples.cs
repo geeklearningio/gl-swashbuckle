@@ -2,7 +2,6 @@
 {
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
-    using System.Collections.Generic;
 
     public class AssignExamples : IOperationFilter
     {
@@ -15,14 +14,14 @@
 
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            var isSuccessResponse = operation.Responses.TryGetValue("200", out Response successResponse)
+            var isSuccessResponse = operation.Responses.TryGetValue("200", out var successResponse)
                 || operation.Responses.TryGetValue("204", out successResponse);
 
-            if (this.builder.Examples.TryGetValue(context.ApiDescription.ActionDescriptor.DisplayName, out Dictionary<string, Dictionary<string, object>> actionSamples))
+            if (this.builder.Examples.TryGetValue(context.ApiDescription.ActionDescriptor.DisplayName, out var actionSamples))
             {
                 foreach (var statusSamples in actionSamples)
                 {
-                    if (!operation.Responses.TryGetValue(statusSamples.Key, out Response statusResponse))
+                    if (!operation.Responses.TryGetValue(statusSamples.Key, out var statusResponse))
                     {
                         statusResponse = new Response();
                         operation.Responses[statusSamples.Key] = statusResponse;

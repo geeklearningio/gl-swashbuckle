@@ -1,14 +1,13 @@
 ﻿namespace GeekLearning.Domain.SwahbuckleExtensions
 {
-    using Swashbuckle.AspNetCore.SwaggerGen;
-    using Swashbuckle.AspNetCore.Swagger;
+    using System.Threading.Tasks;
     using GeekLearning.Domain.AspnetCore;
     using Microsoft.AspNetCore.Mvc.Controllers;
-    using System.Threading.Tasks;
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
 
     public class MaybeResultDocumentFilter : IOperationFilter
     {
-
         public void Apply(Operation operation, OperationFilterContext context)
         {
             switch (context.ApiDescription.ActionDescriptor)
@@ -32,7 +31,7 @@
                         {
                             var responseType = typeof(Response<>).MakeGenericType(returnType.GenericTypeArguments[0]);
 
-                            operation.Responses.TryGetValue("200", out Response okResponse);
+                            operation.Responses.TryGetValue("200", out var okResponse);
 
                             if (okResponse == null)
                             {

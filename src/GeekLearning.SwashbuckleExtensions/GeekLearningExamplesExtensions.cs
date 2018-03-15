@@ -1,8 +1,8 @@
 ﻿namespace GeekLearning.SwashbuckleExtensions
 {
-    using Swashbuckle.AspNetCore.SwaggerGen;
     using System;
     using System.Collections.Generic;
+    using Swashbuckle.AspNetCore.SwaggerGen;
 
     public static class GeekLearningExamplesExtensions
     {

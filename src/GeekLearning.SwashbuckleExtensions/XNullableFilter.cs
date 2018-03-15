@@ -1,11 +1,9 @@
-﻿using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Swashbuckle.AspNetCore.Swagger;
-
-namespace GeekLearning.SwashbuckleExtensions
+﻿namespace GeekLearning.SwashbuckleExtensions
 {
+    using System;
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
+
     public class XNullableFilter : ISchemaFilter
     {
         private readonly bool omitFalseValue;
@@ -21,7 +19,7 @@ namespace GeekLearning.SwashbuckleExtensions
 
         public void Apply(Schema model, SchemaFilterContext context)
         {
-            bool nullable = !context.SystemType.IsValueType;
+            var nullable = !context.SystemType.IsValueType;
 
             var type = context.SystemType;
             if (type.IsConstructedGenericType)
@@ -33,8 +31,8 @@ namespace GeekLearning.SwashbuckleExtensions
                     //var nullableUnderlyingType = Nullable.GetUnderlyingType(context.SystemType);
                 }
             }
-           
-            if (nullable || !omitFalseValue)
+
+            if (nullable || !this.omitFalseValue)
             {
                 model.Extensions["x-nullable"] = nullable;
             }

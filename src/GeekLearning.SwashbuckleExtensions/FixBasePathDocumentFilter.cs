@@ -1,11 +1,8 @@
-﻿using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Swashbuckle.AspNetCore.Swagger;
-
-namespace GeekLearning.SwashbuckleExtensions
+﻿namespace GeekLearning.SwashbuckleExtensions
 {
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
+
     public class FixBasePathDocumentFilter : IDocumentFilter
     {
         public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)

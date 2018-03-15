@@ -48,10 +48,10 @@
 
                 var actionId = methodCall.Method.DeclaringType.FullName + "." + methodCall.Method.Name;
 
-                if (!examples.TryGetValue(actionId, out Dictionary<string, Dictionary<string, object>> actionResponses))
+                if (!this.examples.TryGetValue(actionId, out var actionResponses))
                 {
                     actionResponses = new Dictionary<string, Dictionary<string, object>>();
-                    examples[actionId] = actionResponses;
+                    this.examples[actionId] = actionResponses;
                 }
 
                 return new ActionContext<TReturn>(actionResponses);
@@ -70,10 +70,10 @@
 
                 var actionId = methodCall.Method.DeclaringType.FullName + "." + methodCall.Method.Name;
 
-                if (!examples.TryGetValue(actionId, out Dictionary<string, Dictionary<string, object>> actionResponses))
+                if (!this.examples.TryGetValue(actionId, out var actionResponses))
                 {
                     actionResponses = new Dictionary<string, Dictionary<string, object>>();
-                    examples[actionId] = actionResponses;
+                    this.examples[actionId] = actionResponses;
                 }
 
                 return new ActionContext<TReturn>(actionResponses);
@@ -90,10 +90,10 @@
 
                 public ActionContext<TReturn> Json(TReturn data, string status = "200")
                 {
-                    if (!actionResponses.TryGetValue(status, out Dictionary<string, object> statusResponses))
+                    if (!this.actionResponses.TryGetValue(status, out var statusResponses))
                     {
                         statusResponses = new Dictionary<string, object>();
-                        actionResponses[status] = statusResponses;
+                        this.actionResponses[status] = statusResponses;
                     }
 
                     statusResponses.Add("application/json", data);
