@@ -1,22 +1,22 @@
 ﻿namespace GeekLearning.DotNet.Swashbuckle
 {
-    using HandlebarsDotNet;
-    using Microsoft.DotNet.Cli.Utils;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using HandlebarsDotNet;
+    using Microsoft.DotNet.Cli.Utils;
 
     public class Program
     {
-        private const string netCoreAppFramework = "netcoreapp";
-        private const string targetFrameworkProperty = "TargetFramework";
-        private const string targetFrameworksProperty = "TargetFrameworks";
-        private const string intermediateOutputPathProperty = "IntermediateOutputPath";
-        private const string assemblyNameProperty = "AssemblyName";
-        private const string referencesProperty = "References";
+        private const string NetCoreAppFramework = "netcoreapp";
+        private const string TargetFrameworkProperty = "TargetFramework";
+        private const string TargetFrameworksProperty = "TargetFrameworks";
+        private const string IntermediateOutputPathProperty = "IntermediateOutputPath";
+        private const string AssemblyNameProperty = "AssemblyName";
+        private const string ReferencesProperty = "References";
 
         public static void Main(string[] args)
         {
@@ -30,7 +30,7 @@
             var projectDirectory = Path.GetDirectoryName(projectFile);
             var (properties, references) = ReadProperties(projectFile, options.Configuration, options.Framework?.Framework);
 
-            var tempProjectPath = Path.Combine(projectDirectory, properties[intermediateOutputPathProperty], "SwaggerGen");
+            var tempProjectPath = Path.Combine(projectDirectory, properties[IntermediateOutputPathProperty], "SwaggerGen");
             if (!Directory.Exists(tempProjectPath))
             {
                 Directory.CreateDirectory(tempProjectPath);
@@ -41,10 +41,10 @@
             var generationContext = new
             {
                 ProjectPath = projectFile,
-                TargetFramework = properties[targetFrameworkProperty],
-                AssemblyName = properties[assemblyNameProperty],
+                TargetFramework = properties[TargetFrameworkProperty],
+                AssemblyName = properties[AssemblyNameProperty],
                 ContentRoot = projectDirectory,
-                options.ApiVersion,
+                ApiVersion = options.ApiVersion,
                 OutputPath = Path.IsPathRooted(options.OutputPath) ? options.OutputPath : Path.Combine(projectDirectory, options.OutputPath),
                 References = references.ToDictionary(x => x.Key.Replace(".", ""), y => y.Value)
             };
@@ -64,6 +64,7 @@
                                     .Replace(".cst", ".cs"))),
                         template(generationContext));
                 }
+
             }
 
             var restore = Command.CreateDotNet("restore", new string[] { });
@@ -136,10 +137,10 @@
                 $@"<Project>
                       <Target Name=""_GetDotNetNames"" DependsOnTargets=""ResolvePackageDependenciesDesignTime"">
                          <ItemGroup>
-                            <_DotNetNamesOutput Include=""{assemblyNameProperty}: $({assemblyNameProperty})"" />
-                            <_DotNetNamesOutput Include=""{targetFrameworkProperty}: $({targetFrameworkProperty})"" />
-                            <_DotNetNamesOutput Include=""{targetFrameworksProperty}: $({targetFrameworksProperty})"" />
-                            <_DotNetNamesOutput Include=""{intermediateOutputPathProperty}: $({intermediateOutputPathProperty})"" />
+                            <_DotNetNamesOutput Include=""{AssemblyNameProperty}: $({AssemblyNameProperty})"" />
+                            <_DotNetNamesOutput Include=""{TargetFrameworkProperty}: $({TargetFrameworkProperty})"" />
+                            <_DotNetNamesOutput Include=""{TargetFrameworksProperty}: $({TargetFrameworksProperty})"" />
+                            <_DotNetNamesOutput Include=""{IntermediateOutputPathProperty}: $({IntermediateOutputPathProperty})"" />
                          </ItemGroup>
                          <WriteLinesToFile File=""$(_DotNetNamesFile)"" Lines=""@(_DotNetNamesOutput)"" Overwrite=""true"" />
                          <WriteLinesToFile File=""$(_DotNetReferencesFile)"" Lines=""@(_DependenciesDesignTime)"" Overwrite=""true"" />
@@ -149,7 +150,7 @@
             var additionnalParameters = string.Empty;
             if (!string.IsNullOrEmpty(framework))
             {
-                additionnalParameters = $"/p:{targetFrameworkProperty}={framework}";
+                additionnalParameters = $"/p:{TargetFrameworkProperty}={framework}";
             }
 
             var dotNetNamesFileName = Path.GetTempFileName();

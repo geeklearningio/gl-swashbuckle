@@ -1,9 +1,9 @@
 ﻿namespace GeekLearning.SwashbuckleExtensions
 {
-    using Swashbuckle.AspNetCore.Swagger;
-    using Swashbuckle.AspNetCore.SwaggerGen;
     using System;
     using System.Linq;
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
 
     public class DropTextPlainProduces : IOperationFilter
     {

@@ -1,15 +1,15 @@
 ﻿namespace GeekLearning.DotNet.Swashbuckle
 {
+    using System.Collections.Generic;
+    using System.Reflection;
     using Microsoft.DotNet.Cli.Utils;
     using Microsoft.Extensions.CommandLineUtils;
     using NuGet.Frameworks;
-    using System.Collections.Generic;
-    using System.Reflection;
 
     public class CommandLineOptions
     {
-        private static readonly Assembly thisAssembly = typeof(CommandLineOptions).GetTypeInfo().Assembly;
-        private static readonly string assemblyVersion = thisAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? thisAssembly.GetName().Version.ToString();
+        private static readonly Assembly ThisAssembly = typeof(CommandLineOptions).GetTypeInfo().Assembly;
+        private static readonly string AssemblyVersion = ThisAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? ThisAssembly.GetName().Version.ToString();
 
         public string Configuration { get; set; }
 
@@ -78,7 +78,7 @@
                 CommandOptionType.SingleValue
                 );
 
-            app.VersionOption("--version", () => assemblyVersion);
+            app.VersionOption("--version", () => AssemblyVersion);
 
             app.HelpOption("-h|--help");
 

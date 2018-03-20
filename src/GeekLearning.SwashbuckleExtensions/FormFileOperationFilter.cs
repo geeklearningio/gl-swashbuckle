@@ -1,16 +1,15 @@
 ﻿namespace GeekLearning.SwashbuckleExtensions
 {
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc.Abstractions;
-    using Swashbuckle.AspNetCore.Swagger;
-    using Swashbuckle.AspNetCore.SwaggerGen;
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Reflection;
-
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc.Abstractions;
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
 
     /// <summary>
     /// Bring support for IFormFile
@@ -18,17 +17,20 @@
     /// </summary>
     public class FormFileOperationFilter : IOperationFilter
     {
+        private static readonly IComparer<IParameter> Comparer = new ParameterByNameComparison();
+        private static readonly ImmutableArray<string> IFormFilePropertyNames = typeof(IFormFile).GetTypeInfo().DeclaredProperties.Select(p => p.Name).ToImmutableArray();
+
         private struct ContainerParameterData
         {
             public readonly ParameterDescriptor Parameter;
             public readonly PropertyInfo Property;
 
-            public string Name => $"{Parameter.Name}.{Property.Name}";
+            public string Name => $"{this.Parameter.Name}.{this.Property.Name}";
 
             public ContainerParameterData(ParameterDescriptor parameter, PropertyInfo property)
             {
-                Parameter = parameter;
-                Property = property;
+                this.Parameter = parameter;
+                this.Property = property;
             }
         }
 
@@ -37,20 +39,19 @@
             public int Compare(IParameter x, IParameter y) => string.Compare(x.Name, y.Name);
         }
 
-        private static readonly IComparer<IParameter> comparer = new ParameterByNameComparison();
-
-        private static readonly ImmutableArray<string> iFormFilePropertyNames =
-            typeof(IFormFile).GetTypeInfo().DeclaredProperties.Select(p => p.Name).ToImmutableArray();
-
         public void Apply(Operation operation, OperationFilterContext context)
         {
             var parameters = operation.Parameters;
             if (parameters == null)
+            {
                 return;
+            }
 
             var @params = context.ApiDescription.ActionDescriptor.Parameters;
             if (parameters.Count == @params.Count)
+            {
                 return;
+            }
 
             var formFileParams =
                 (from parameter in @params
@@ -66,7 +67,9 @@
                 .ToImmutableArray();
 
             if (!(formFileParams.Any() || containerParams.Any()))
+            {
                 return;
+            }
 
             var consumes = operation.Consumes;
             consumes.Clear();
@@ -76,12 +79,15 @@
             {
                 var nonIFormFileProperties =
                     parameters.Where(p =>
-                        !(iFormFilePropertyNames.Contains(p.Name)
+                        !(IFormFilePropertyNames.Contains(p.Name)
                        && string.Compare(p.In, "formData", StringComparison.OrdinalIgnoreCase) == 0))
                        .ToImmutableArray();
 
                 parameters.Clear();
-                foreach (var parameter in nonIFormFileProperties) parameters.Add(parameter);
+                foreach (var parameter in nonIFormFileProperties)
+                {
+                    parameters.Add(parameter);
+                }
 
                 foreach (var parameter in formFileParams)
                 {
@@ -103,17 +109,20 @@
                                             where p.Name.StartsWith(parameterFilter)
                                             select p);
                 }
+
                 paramsToRemove.ForEach(x => parameters.Remove(x));
 
                 foreach (var parameter in containerParams)
                 {
                     if (iFormFileType.IsAssignableFrom(parameter.Property.PropertyType))
+                    {
                         parameters.Add(new NonBodyParameter
                         {
                             Name = parameter.Name,
                             Required = IsRequired(parameter.Property),
                             Type = "file"
                         });
+                    }
                     else
                     {
                         var indexesOfTopLevelParam = @params
@@ -122,9 +131,13 @@
                             .Select(pi => pi.Value);
                         int skipIndex;
                         if (indexesOfTopLevelParam.Any())
+                        {
                             skipIndex = indexesOfTopLevelParam.First();
+                        }
                         else
+                        {
                             skipIndex = 0;
+                        }
 
                         var filteredParameters = parameters
                             .Where(p => p.Name == parameter.Property.Name
@@ -135,18 +148,16 @@
                                           .Name = parameter.Name;
                     }
                 }
-
             }
-            foreach (IParameter param in parameters)
+
+            foreach (var param in parameters)
             {
                 param.In = "formData";
             }
-            (parameters as List<IParameter>)?.Sort(comparer);
+
+            (parameters as List<IParameter>)?.Sort(Comparer);
         }
 
-        private static bool IsRequired(PropertyInfo propertyInfo)
-            => propertyInfo.CustomAttributes
-                           .OfType<RequiredAttribute>()
-                           .Any();
+        private static bool IsRequired(PropertyInfo propertyInfo) => propertyInfo.CustomAttributes.OfType<RequiredAttribute>().Any();
     }
 }

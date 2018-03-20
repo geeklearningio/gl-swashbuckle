@@ -9,14 +9,17 @@
     public sealed class SwaggerFormParameterAttribute : Attribute
     {
         public string Name { get; private set; }
+
         public string Type { get; private set; }
+
         public string Description { get; set; }
+
         public bool IsRequired { get; set; }
 
         public SwaggerFormParameterAttribute(string name, string type)
         {
-            Name = name;
-            Type = type;
+            this.Name = name;
+            this.Type = type;
         }
     }
 }
